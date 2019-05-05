@@ -76,79 +76,29 @@ class Main:
     def solve(self):
         method = Bisection(0.0, 0.11, 10, 0.000001)
         print(method.function(1))
-        root = method.solve()
-        print(root)
-        # plt.figure(1)
-        # plt.title("Bisection Method")
-        # plt.xlabel("X")
-        # plt.ylabel("Y")
-        # plt.axvline(0.02)
-        # x1 = linspace(0, 0.12)
-        # y1 = self.function(x1)
-        # plt.ylim(-0.0003, 0.0003)
-        # plt.plot(x1, y1, "b-*")
-        # plt.show()
+        result, number_of_iterations, errors, time, precision, values = method.solve()
+        print(result)
+        print(number_of_iterations)
+        print(errors)
+        print(time)
+        print(precision)
+        print(values)
 
+        # Plotting
+        plt.figure(1)
+        plt.title("Bisection Method")
+        plt.xlabel("X")
+        plt.ylabel("F(X)")
+        plt.axvline(0.02)
+        x1 = np.linspace(0, 0.12)
+        y1 = self.function(x1)
+        plt.ylim(-0.0003, 0.0003)
+        plt.plot(x1, y1, "b-*")
+        plt.show()
+
+        # Temp function
         def f(t):
             return np.exp(-t) * np.cos(2 * np.pi * t)
-
-        x1 = np.linspace(0.0, 5.0)
-        x2 = np.linspace(0.0, 2.0)
-
-        y1 = np.cos(2 * np.pi * x1) * np.exp(-x1)
-        y2 = np.cos(2 * np.pi * x2)
-
-        plt.subplot(10, 1, 1)
-        plt.plot(x1, y1, 'o-')
-        plt.title('Bisection Method')
-        plt.ylabel('Iteration 1')
-
-        plt.subplot(10, 1, 2)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 2')
-
-        plt.subplot(10, 1, 3)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 3')
-
-        plt.subplot(10, 1, 4)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 4')
-
-        plt.subplot(10, 1, 5)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 4')
-
-        plt.subplot(10, 1, 6)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 4')
-
-        plt.subplot(10, 1, 7)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 4')
-
-        plt.subplot(10, 1, 8)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 4')
-
-        plt.subplot(10, 1, 9)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 4')
-
-        plt.subplot(10, 1, 10)
-        plt.plot(x2, y2, '.-')
-        plt.xlabel('time (s)')
-        plt.ylabel('Iteration 4')
-
-        plt.show()
 
     def function(self, x):
         return x ** 3 - 0.165 * x ** 2 + 3.993 * 10 ** -4
@@ -156,7 +106,7 @@ class Main:
 
 class Bisection(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, x1, x2, max_iterations, epsilon):
+    def __init__(self, x1, x2, max_iterations=50, epsilon=0.00001):
         self.x1 = x1
         self.x2 = x2
         self.max_iterations = max_iterations
@@ -166,7 +116,6 @@ class Bisection(object):
         number_of_iterations = 0
         errors = []
         time = 0
-        precision = 0
         values = []
         error = 100
         if self.function(self.x1) * self.function(self.x2) > 0:
@@ -174,9 +123,11 @@ class Bisection(object):
         for i in range(self.max_iterations):
             number_of_iterations = number_of_iterations+1
             mid = (self.x1 + self.x2) / 2
+            values.append(mid)
             if i != 0:
-                error = abs((mid - root) / mid)
-            root = mid
+                error = abs((mid - approximate_root) / mid)
+                errors.append(error)
+            approximate_root = mid
 
             test = self.function(self.x1) * self.function(mid)
             if test < 0:
@@ -184,9 +135,11 @@ class Bisection(object):
             else:
                 self.x1 = mid
             if test == 0 or error < self.epsilon:
-                root = mid
+                approximate_root = mid
                 break
-        return root
+
+        precision = errors[-1]
+        return approximate_root, number_of_iterations, errors, time, precision, values
 
     def function(self, x):
         return x ** 3 - 0.165 * x ** 2 + 3.993 * 10 ** -4
@@ -198,8 +151,6 @@ class Limits(object):
 
     def get(self):
         return self.points
-
-
 
 
 root = Tk()

@@ -9,6 +9,7 @@ import _ssl
 from tkinter import *
 import matplotlib.pyplot as plt
 import numpy as np
+import time as tm
 from functools import partial
 import parser
 
@@ -20,17 +21,14 @@ def evaluate_equation(formula, x):
 
 
 class Iterator(object):
-    def __init__(self):
-        self.__i = -1
-        self.limits = []
-
-    def set_limits(self, limits):
+    def __init__(self, limits=[]):
         self.limits = limits
+        self.__i = -1
 
     def __next(self):
         self.__i = self.__i + 1
         if self.__i > self.limits.__len__():
-            self.__i = self.limits.__len__() - 1
+            self.__i = self.limits.__len__()-1
         return self.limits[self.__i]
 
     def __prev(self):
@@ -40,13 +38,7 @@ class Iterator(object):
         return self.limits[self.__i]
 
 
-# global variables
-global_limits = []
-iterator = Iterator()
-
-
 class Main:
-    # GUI init.
     def __init__(self, master):
         self.current_method = "Bisection"
         width = 800
@@ -94,6 +86,8 @@ class Main:
         b = Button(master, text="Solve", command=self.solve, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
         b.place(x=380, y=320)
 
+
+
         # Create a Tkinter variable
         tkvar = StringVar(master)
 
@@ -113,8 +107,6 @@ class Main:
         self.current_method = value
 
     def solve(self):
-        global global_limits
-        global iterator
         formula_as_str = self.function_entry.get()
         max_iter = self.max_entry.get()
         x1 = self.x0_entry.get()
@@ -122,85 +114,44 @@ class Main:
         eps = self.epsilon_entry.get()
         if self.current_method == "Bisection":
             method = Bisection(formula_as_str, x1, x2, max_iter, eps)
-        elif self.current_method == "Newton-Raphson":
-            method = NewtonRaphson(formula_as_str, x1, x2, max_iter, eps)
-        elif self.current_method == "False-Position":
-            method = FalsePosition(formula_as_str, x1, x2, max_iter, eps)
-        elif self.current_method == "Fixed Point":
-            method = FixedPoint(formula_as_str, x1, x2, max_iter, eps)
-        elif self.current_method == "Secant":
-            method = Secant(formula_as_str, x1, x2, max_iter, eps)
-        else:
-            method = BiergeVieta(formula_as_str, x1, x2, max_iter, eps)
+        # elif self.current_method == "Newton-Raphson":
+        #     method = NewtonRaphson(formula_as_str, x1, x2, max_iter, eps)
+        # elif self.current_method == "False-Position":
+        #     method = FalsePosition(formula_as_str, x1, x2, max_iter, eps)
+        # elif self.current_method == "Fixed Point":
+        #     method = FixedPoint(formula_as_str, x1, x2, max_iter, eps)
+        # elif self.current_method == "Secant":
+        #     method = Secant(formula_as_str, x1, x2, max_iter, eps)
+        # else:
+        #     method = BiergeVieta(formula_as_str, x1, x2, max_iter, eps)
         print(formula_as_str)
-        result, number_of_iterations, errors, time, precision, values, global_limits = method.solve()
+        result, number_of_iterations, errors, time, precision, values = method.solve()
         print(result)
         print(number_of_iterations)
         print(errors)
         print(time)
         print(precision)
         print(values)
-        print(global_limits)
-        iterator.set_limits(global_limits)
 
-        # TODO : use flexible plotting scales
         # Plotting
         plt.figure(1)
-        plt.title(self.current_method)
+        plt.title("Bisection Method")
         plt.xlabel("X")
         plt.ylabel("F(X)")
-        plt.axvline(0.02)
         x1 = np.linspace(0, 0.12)
-        y1 = evaluate_equation(formula_as_str, x1)
+        y1 = self.function(x1)
         plt.ylim(-0.0003, 0.0003)
-        plt.plot(x1, y1, "b-*")
+        plt.plot(x1, y1, "r-*")
         plt.show(block=False)
 
         iteration_label = Label(text="Iterations: ", font="verdana 10 bold", bg="#212F3C", pady=20,
-                                fg="#16A085")
-
+                      fg="#16A085")
         iteration_label.place(x=50, y=360)
-        n = Button(text="-->", command=self.right_arrow, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
+        n = Button(text="-->", command=right_arrow, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
         n.place(x=250, y=380)
 
-        p = Button(text="<--", command=self.left_arrow, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
+        p = Button(text="<--", command=left_arrow, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
         p.place(x=170, y=380)
-
-    def right_arrow(self):
-        global iterator
-        limit = iterator.__next()
-        point, mid = limit.get()
-        plt.close('all')
-        plt.figure(1)
-        plt.title("Bisection Method")
-        plt.xlabel("X")
-        plt.ylabel("F(X)")
-        plt.axvline(point[0])
-        plt.axvline(point[1])
-        plt.axvline(mid)
-        x1 = np.linspace(0, 0.12)
-        y1 = function(x1)
-        plt.ylim(-0.0003, 0.0003)
-        plt.plot(x1, y1, "r-*")
-        plt.show(block=False)
-
-    def left_arrow(self):
-        global iterator
-        limit = main.__prev()
-        point, mid = limit.get()
-        plt.close('all')
-        plt.figure(1)
-        plt.title("Bisection Method")
-        plt.xlabel("X")
-        plt.ylabel("F(X)")
-        plt.axvline(point[0])
-        plt.axvline(point[1])
-        plt.axvline(mid)
-        x1 = np.linspace(0, 0.12)
-        y1 = function(x1)
-        plt.ylim(-0.0003, 0.0003)
-        plt.plot(x1, y1, "r-*")
-        plt.show(block=False)
 
 
 class Bisection(object):
@@ -211,18 +162,33 @@ class Bisection(object):
         self.max_iterations = int(max_iterations)
         self.epsilon = float(epsilon)
         self.formula_as_str = formula_as_str
+        self.__i = -1
+        self.approximate_root, self.number_of_iterations, self.errors, self.time, self.precision,\
+        self.values, self.limits = self.solve()
+
+    def next1(self):
+        self.__i = self.__i + 1
+        if self.__i > self.limits.__len__():
+            self.__i = self.limits.__len__()-1
+        return self.limits[self.__i]
+
+    def prev(self):
+        self.__i = self.__i - 1
+        if self.__i < 0:
+            self.__i = 0
+        return self.limits[self.__i]
 
     def solve(self):
         number_of_iterations = 0
         errors = []
         time = 0
         values = []
-        limits = []
         error = 100
+        limits = []
         if evaluate_equation(self.formula_as_str, self.x1) * evaluate_equation(self.formula_as_str, self.x2) > 0:
             print("No Root")
         for i in range(self.max_iterations):
-            number_of_iterations = number_of_iterations + 1
+            number_of_iterations = number_of_iterations+1
             mid = (self.x1 + self.x2) / 2
             values.append(mid)
             limit = Limits(self.x1, self.x2, mid)
@@ -245,65 +211,6 @@ class Bisection(object):
         return approximate_root, number_of_iterations, errors, time, precision, values, limits
 
 
-class Secant(object):
-    # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
-        self.x1 = float(x1)
-        self.x2 = float(x2)
-        self.max_iterations = int(max_iterations)
-        self.epsilon = float(epsilon)
-        self.formula_as_str = formula_as_str
-
-    # def solve(self):
-
-
-class NewtonRaphson(object):
-    # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
-        self.x1 = float(x1)
-        self.x2 = float(x2)
-        self.max_iterations = int(max_iterations)
-        self.epsilon = float(epsilon)
-        self.formula_as_str = formula_as_str
-
-    # def solve(self):
-
-
-class FalsePosition(object):
-    # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
-        self.x1 = float(x1)
-        self.x2 = float(x2)
-        self.max_iterations = int(max_iterations)
-        self.epsilon = float(epsilon)
-        self.formula_as_str = formula_as_str
-
-    # def solve(self):
-
-
-class FixedPoint(object):
-    # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
-        self.x1 = float(x1)
-        self.x2 = float(x2)
-        self.max_iterations = int(max_iterations)
-        self.epsilon = float(epsilon)
-        self.formula_as_str = formula_as_str
-
-    # def solve(self):
-
-
-class BiergeVieta(object):
-    # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
-        self.x1 = float(x1)
-        self.x2 = float(x2)
-        self.max_iterations = int(max_iterations)
-        self.epsilon = float(epsilon)
-        self.formula_as_str = formula_as_str
-
-    # def solve(self):
-
 
 class Limits(object):
     def __init__(self, x1, x2, mid):
@@ -314,8 +221,54 @@ class Limits(object):
         return self.points, self.mid
 
 
-# tkinter main GUI window
+
+def right_arrow():
+    limit = main.next1()
+    point, mid = limit.get()
+    plt.close('all')
+    plt.figure(1)
+    plt.title("Bisection Method")
+    plt.xlabel("X")
+    plt.ylabel("F(X)")
+    plt.axvline(point[0])
+    plt.axvline(point[1])
+    plt.axvline(mid)
+    x1 = np.linspace(0, 0.12)
+    y1 = function(x1)
+    plt.ylim(-0.0003, 0.0003)
+    plt.plot(x1, y1, "r-*")
+    plt.show(block=False)
+
+
+
+
+def left_arrow():
+    limit = main.prev()
+    point, mid = limit.get()
+    plt.close('all')
+    plt.figure(1)
+    plt.title("Bisection Method")
+    plt.xlabel("X")
+    plt.ylabel("F(X)")
+    plt.axvline(point[0])
+    plt.axvline(point[1])
+    plt.axvline(mid)
+    x1 = np.linspace(0, 0.12)
+    y1 = function(x1)
+    plt.ylim(-0.0003, 0.0003)
+    plt.plot(x1, y1, "r-*")
+    plt.show(block=False)
+
+
+def function(x):
+    return x ** 3 - 0.165 * x ** 2 + 3.993 * 10 ** -4
+
+
+
+
 root = Tk()
 b = Main(root)
+root.bind("<Right>", right_arrow)
+root.bind("<Left>", left_arrow)
 root["bg"] = "#212F3C"
 root.mainloop()

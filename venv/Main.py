@@ -19,30 +19,9 @@ def evaluate_equation(formula, x):
     return eval(code)
 
 
-class Iterator(object):
-    def __init__(self):
-        self.__i = -1
-        self.limits = []
-
-    def set_limits(self, limits):
-        self.limits = limits
-
-    def __next(self):
-        self.__i = self.__i + 1
-        if self.__i > self.limits.__len__():
-            self.__i = self.limits.__len__() - 1
-        return self.limits[self.__i]
-
-    def __prev(self):
-        self.__i = self.__i - 1
-        if self.__i < 0:
-            self.__i = 0
-        return self.limits[self.__i]
-
-
 # global variables
 global_limits = []
-iterator = Iterator()
+i = -1
 
 
 class Main:
@@ -114,7 +93,6 @@ class Main:
 
     def solve(self):
         global global_limits
-        global iterator
         formula_as_str = self.function_entry.get()
         max_iter = self.max_entry.get()
         x1 = self.x0_entry.get()
@@ -141,7 +119,6 @@ class Main:
         print(precision)
         print(values)
         print(global_limits)
-        iterator.set_limits(global_limits)
 
         # TODO : use flexible plotting scales
         # Plotting
@@ -149,7 +126,6 @@ class Main:
         plt.title(self.current_method)
         plt.xlabel("X")
         plt.ylabel("F(X)")
-        plt.axvline(0.02)
         x1 = np.linspace(0, 0.12)
         y1 = evaluate_equation(formula_as_str, x1)
         plt.ylim(-0.0003, 0.0003)
@@ -167,8 +143,12 @@ class Main:
         p.place(x=170, y=380)
 
     def right_arrow(self):
-        global iterator
-        limit = iterator.__next()
+        global i
+        global global_limits
+        i = i + 1
+        if i >= len(global_limits):
+            i = len(global_limits) - 1
+        limit = global_limits[i]
         point, mid = limit.get()
         plt.close('all')
         plt.figure(1)
@@ -179,14 +159,17 @@ class Main:
         plt.axvline(point[1])
         plt.axvline(mid)
         x1 = np.linspace(0, 0.12)
-        y1 = function(x1)
+        y1 = evaluate_equation(self.function_entry.get(), x1)
         plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "r-*")
         plt.show(block=False)
 
     def left_arrow(self):
-        global iterator
-        limit = main.__prev()
+        global i
+        i = i - 1
+        if i < 0:
+            i = 0
+        limit = global_limits[i]
         point, mid = limit.get()
         plt.close('all')
         plt.figure(1)
@@ -197,7 +180,7 @@ class Main:
         plt.axvline(point[1])
         plt.axvline(mid)
         x1 = np.linspace(0, 0.12)
-        y1 = function(x1)
+        y1 = evaluate_equation(self.function_entry.get(), x1)
         plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "r-*")
         plt.show(block=False)
@@ -235,7 +218,7 @@ class Bisection(object):
             test = evaluate_equation(self.formula_as_str, self.x1) * evaluate_equation(self.formula_as_str, mid)
             if test < 0:
                 self.x2 = mid
-            else:
+            elif test > 0:
                 self.x1 = mid
             if test == 0 or error < self.epsilon:
                 approximate_root = mid

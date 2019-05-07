@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="04056d74-8947-4c03-be87-7c40ad711336" name="Default Changelist" comment="Attached front-end with back-end, working version of parser, skeleton for methods, bisection works with user input">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pyvenv.cfg" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,8 +17,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/venv/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="164" lean-forward="true" selection-start-line="164" selection-end-line="164" />
+            <state relative-caret-position="187">
+              <caret line="176" column="23" lean-forward="true" selection-start-line="176" selection-start-column="23" selection-end-line="176" selection-end-column="23" />
+              <folding>
+                <element signature="e#84#95#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/temp.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="227" column="20" lean-forward="true" selection-start-line="227" selection-start-column="20" selection-end-line="227" selection-end-column="20" />
               <folding>
                 <element signature="e#84#95#0" expanded="true" />
               </folding>
@@ -227,13 +241,13 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.23731588" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3502455" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.27168575" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.49099836" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.22126436" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.22094926" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.20120482" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
@@ -273,16 +287,6 @@
     <entry file="file://$PROJECT_DIR$/venv/Scripts/temp.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/venv/temp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="144" column="29" lean-forward="true" selection-start-line="144" selection-start-column="17" selection-end-line="144" selection-end-column="29" />
-          <folding>
-            <element signature="e#84#95#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
@@ -304,10 +308,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/venv/pyvenv.cfg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/temp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="227" column="20" lean-forward="true" selection-start-line="227" selection-start-column="20" selection-end-line="227" selection-end-column="20" />
+          <folding>
+            <element signature="e#84#95#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/venv/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="164" lean-forward="true" selection-start-line="164" selection-end-line="164" />
+        <state relative-caret-position="187">
+          <caret line="176" column="23" lean-forward="true" selection-start-line="176" selection-start-column="23" selection-end-line="176" selection-end-column="23" />
           <folding>
             <element signature="e#84#95#0" expanded="true" />
           </folding>

@@ -6,13 +6,23 @@ Created on Mon Mar 25 00:53:21 2019
 """
 
 import _ssl
-from tkinter import *
+from Tkinter import *
 import matplotlib.pyplot as plt
 import numpy as np
+from functools import partial
+import parser
+
+
+# TODO : adding trigonometry parsing
+def evaluate_equation(formula, x):
+    code = parser.expr(formula).compile()
+    return eval(code)
 
 
 class Main:
+    # GUI init.
     def __init__(self, master):
+        self.current_method = "Bisection"
         width = 800
         height = 400
         x = (master.winfo_screenwidth() // 2) - (width // 2)
@@ -25,8 +35,8 @@ class Main:
         label_1 = Label(master, text="Function: ", font="verdana 10 bold", bg="#212F3C", fg="#16A085")
         label_1.place(x=50, y=120)
 
-        function_entry = Entry(master)
-        function_entry.place(x=150, y=120, width=200)
+        self.function_entry = Entry(master)
+        self.function_entry.place(x=150, y=120, width=200)
 
         label_1 = Label(master, text="Method: ", font="verdana 10 bold", bg="#212F3C", fg="#16A085")
         label_1.place(x=50, y=170)
@@ -37,23 +47,23 @@ class Main:
         label_3 = Label(master, text="Epsilon: ", font="verdana 10 bold", bg="#212F3C", fg="#16A085")
         label_3.place(x=380, y=220)
 
-        epsilon_entry = Entry(master)
-        epsilon_entry.place(x=460, y=220, width=50)
+        self.epsilon_entry = Entry(master)
+        self.epsilon_entry.place(x=460, y=220, width=50)
 
-        max_entry = Entry(master)
-        max_entry.place(x=220, y=220, width=50)
+        self.max_entry = Entry(master)
+        self.max_entry.place(x=220, y=220, width=50)
 
         x0 = Label(master, text="X0: ", font="verdana 10 bold", bg="#212F3C", fg="#16A085")
         x0.place(x=50, y=270)
 
-        x0_entry = Entry(master)
-        x0_entry.place(x=100, y=270, width=50)
+        self.x0_entry = Entry(master)
+        self.x0_entry.place(x=100, y=270, width=50)
 
         x1 = Label(master, text="X1: ", font="verdana 10 bold", bg="#212F3C", fg="#16A085")
         x1.place(x=172, y=270)
 
-        x1_entry = Entry(master)
-        x1_entry.place(x=220, y=270, width=50)
+        self.x1_entry = Entry(master)
+        self.x1_entry.place(x=220, y=270, width=50)
 
         b = Button(master, text="Solve", command=self.solve, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
         b.place(x=380, y=320)
@@ -65,17 +75,36 @@ class Main:
         choices = {'Bisection', 'False-Position', 'Fixed Point', 'Newton-Raphson', 'Secant', 'Bierge-Vieta'}
         tkvar.set('Bisection')  # set the default option
 
-        popupMenu = OptionMenu(master, tkvar, *choices)
-        popupMenu.place(x=150, y=165)
-        popupMenu["bg"] = "#16A085"
+        self.popupMenu = OptionMenu(master, tkvar, *choices, command=self.method_to_use)
+        self.popupMenu.place(x=150, y=165)
+        self.popupMenu["bg"] = "#16A085"
 
         label = Label(master, text="#.# Numerical Methods #.#", font="verdana 20 bold", bg="#212F3C", pady=20,
                       fg="#16A085")
         label.place(x=200, y=10)
 
+    def method_to_use(self, value):
+        self.current_method = value
+
     def solve(self):
-        method = Bisection(0.0, 0.11, 10, 0.000001)
-        print(method.function(1))
+        formula_as_str = self.function_entry.get()
+        max_iter = self.max_entry.get()
+        x1 = self.x0_entry.get()
+        x2 = self.x1_entry.get()
+        eps = self.epsilon_entry.get()
+        if self.current_method == "Bisection":
+            method = Bisection(formula_as_str, x1, x2, max_iter, eps)
+        elif self.current_method == "Newton-Raphson":
+            method = NewtonRaphson(formula_as_str, x1, x2, max_iter, eps)
+        elif self.current_method == "False-Position":
+            method = FalsePosition(formula_as_str, x1, x2, max_iter, eps)
+        elif self.current_method == "Fixed Point":
+            method = FixedPoint(formula_as_str, x1, x2, max_iter, eps)
+        elif self.current_method == "Secant":
+            method = Secant(formula_as_str, x1, x2, max_iter, eps)
+        else:
+            method = BiergeVieta(formula_as_str, x1, x2, max_iter, eps)
+        print(formula_as_str)
         result, number_of_iterations, errors, time, precision, values = method.solve()
         print(result)
         print(number_of_iterations)
@@ -83,34 +112,28 @@ class Main:
         print(time)
         print(precision)
         print(values)
-
+        # TODO : use flexible plotting scales
         # Plotting
         plt.figure(1)
-        plt.title("Bisection Method")
+        plt.title(self.current_method)
         plt.xlabel("X")
         plt.ylabel("F(X)")
         plt.axvline(0.02)
         x1 = np.linspace(0, 0.12)
-        y1 = self.function(x1)
+        y1 = evaluate_equation(formula_as_str, x1)
         plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "b-*")
         plt.show()
 
-        # Temp function
-        def f(t):
-            return np.exp(-t) * np.cos(2 * np.pi * t)
-
-    def function(self, x):
-        return x ** 3 - 0.165 * x ** 2 + 3.993 * 10 ** -4
-
 
 class Bisection(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, x1, x2, max_iterations=50, epsilon=0.00001):
-        self.x1 = x1
-        self.x2 = x2
-        self.max_iterations = max_iterations
-        self.epsilon = epsilon
+    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        self.x1 = float(x1)
+        self.x2 = float(x2)
+        self.max_iterations = int(max_iterations)
+        self.epsilon = float(epsilon)
+        self.formula_as_str = formula_as_str
 
     def solve(self):
         number_of_iterations = 0
@@ -118,10 +141,10 @@ class Bisection(object):
         time = 0
         values = []
         error = 100
-        if self.function(self.x1) * self.function(self.x2) > 0:
+        if evaluate_equation(self.formula_as_str, self.x1) * evaluate_equation(self.formula_as_str, self.x2) > 0:
             print("No Root")
         for i in range(self.max_iterations):
-            number_of_iterations = number_of_iterations+1
+            number_of_iterations = number_of_iterations + 1
             mid = (self.x1 + self.x2) / 2
             values.append(mid)
             if i != 0:
@@ -129,7 +152,7 @@ class Bisection(object):
                 errors.append(error)
             approximate_root = mid
 
-            test = self.function(self.x1) * self.function(mid)
+            test = evaluate_equation(self.formula_as_str, self.x1) * evaluate_equation(self.formula_as_str, mid)
             if test < 0:
                 self.x2 = mid
             else:
@@ -141,8 +164,65 @@ class Bisection(object):
         precision = errors[-1]
         return approximate_root, number_of_iterations, errors, time, precision, values
 
-    def function(self, x):
-        return x ** 3 - 0.165 * x ** 2 + 3.993 * 10 ** -4
+
+class Secant(object):
+    # Default Max Iterations = 50, Default Epsilon = 0.00001
+    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        self.x1 = float(x1)
+        self.x2 = float(x2)
+        self.max_iterations = int(max_iterations)
+        self.epsilon = float(epsilon)
+        self.formula_as_str = formula_as_str
+
+    # def solve(self):
+
+
+class NewtonRaphson(object):
+    # Default Max Iterations = 50, Default Epsilon = 0.00001
+    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        self.x1 = float(x1)
+        self.x2 = float(x2)
+        self.max_iterations = int(max_iterations)
+        self.epsilon = float(epsilon)
+        self.formula_as_str = formula_as_str
+
+    # def solve(self):
+
+
+class FalsePosition(object):
+    # Default Max Iterations = 50, Default Epsilon = 0.00001
+    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        self.x1 = float(x1)
+        self.x2 = float(x2)
+        self.max_iterations = int(max_iterations)
+        self.epsilon = float(epsilon)
+        self.formula_as_str = formula_as_str
+
+    # def solve(self):
+
+
+class FixedPoint(object):
+    # Default Max Iterations = 50, Default Epsilon = 0.00001
+    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        self.x1 = float(x1)
+        self.x2 = float(x2)
+        self.max_iterations = int(max_iterations)
+        self.epsilon = float(epsilon)
+        self.formula_as_str = formula_as_str
+
+    # def solve(self):
+
+
+class BiergeVieta(object):
+    # Default Max Iterations = 50, Default Epsilon = 0.00001
+    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        self.x1 = float(x1)
+        self.x2 = float(x2)
+        self.max_iterations = int(max_iterations)
+        self.epsilon = float(epsilon)
+        self.formula_as_str = formula_as_str
+
+    # def solve(self):
 
 
 class Limits(object):
@@ -153,6 +233,7 @@ class Limits(object):
         return self.points
 
 
+# tkinter main GUI window
 root = Tk()
 b = Main(root)
 root["bg"] = "#212F3C"

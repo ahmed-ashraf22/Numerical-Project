@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="04056d74-8947-4c03-be87-7c40ad711336" name="Default Changelist" comment="">
+    <list default="true" id="04056d74-8947-4c03-be87-7c40ad711336" name="Default Changelist" comment="Attached front-end with back-end, working version of parser, skeleton for methods, bisection works with user input">
+      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Numerical.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Numerical.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Numerical Assignment.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,10 +20,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/venv/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="117" column="19" selection-start-line="117" selection-start-column="19" selection-end-line="117" selection-end-column="19" />
+            <state relative-caret-position="1140">
+              <caret line="211" column="22" lean-forward="true" selection-start-line="211" selection-start-column="22" selection-end-line="211" selection-end-column="22" />
               <folding>
                 <element signature="e#84#95#0" expanded="true" />
+                <element signature="e#254#335#0" />
+                <element signature="e#269#2628#0" />
+                <element signature="e#2860#2887#0" />
+                <element signature="e#3731#5015#0" />
+                <element signature="e#5979#6330#0" />
+                <element signature="e#6369#6722#0" />
+                <element signature="e#6761#7114#0" />
+                <element signature="e#7148#7501#0" />
+                <element signature="e#7536#7889#0" />
+                <element signature="e#5370#5475#0" />
               </folding>
             </state>
           </provider>
@@ -35,6 +48,13 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>self.function</find>
+      <find>function</find>
+      <find>Limits</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -43,18 +63,12 @@
       <list>
         <option value="$PROJECT_DIR$/Main.py" />
         <option value="$PROJECT_DIR$/venv/Numerical Assignment.py" />
+        <option value="$PROJECT_DIR$/venv/Methods.py" />
         <option value="$PROJECT_DIR$/venv/Main.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" fullScreen="true">
     <option name="x" value="170" />
     <option name="y" value="91" />
     <option name="width" value="1026" />
@@ -66,31 +80,28 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="Numerical" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Numerical" type="462c0819:PsiDirectoryNode" />
+              <item name="Numerical-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Numerical-Project" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Numerical" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Numerical" type="462c0819:PsiDirectoryNode" />
+              <item name="Numerical-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Numerical-Project" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Numerical" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -122,6 +133,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/venv/Main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -143,6 +155,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
@@ -164,9 +177,32 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/venv/Numerical Assignment.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="Numerical" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
@@ -190,58 +226,60 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1556125937802</updated>
+      <workItem from="1557187625490" duration="8267000" />
     </task>
     <servers />
   </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="8267000" />
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13541667" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15736766" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.17512275" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.2782324" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.1746988" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.27710843" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.22258593" />
+      <window_info anchor="bottom" id="Terminal" order="8" visible="true" weight="0.22168675" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.20130932" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.20120482" />
+      <window_info anchor="right" x="0" y="0" width="310" height="700" id="Documentation" side_tool="true" weight="0.3297568" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="SciView" weight="0.3297568" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Numerical_Project$Main___.coverage" NAME="Main (١) Coverage Results" MODIFIED="1557233271280" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv" />
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>function</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Main.py" />
-    <entry file="file://$USER_HOME$/Desktop/Numerical.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
-          <folding>
-            <element signature="e#84#104#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/tokenize.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="447" column="8" lean-forward="true" selection-start-line="447" selection-start-column="8" selection-end-line="447" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/tkinter/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="28917">
-          <caret line="1704" selection-start-line="1704" selection-end-line="1704" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Desktop/Numerical.py" />
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/tokenize.py" />
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/tkinter/__init__.py" />
     <entry file="file://$PROJECT_DIR$/venv/Numerical Assignment.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -249,19 +287,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/envs/tensorflow/Lib/tkinter/__init__.py">
+    <entry file="file://$USER_HOME$/Anaconda3/envs/tensorflow/Lib/tkinter/__init__.py" />
+    <entry file="file:///System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-tk/Tkinter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="1557" selection-start-line="1557" selection-end-line="1557" />
+        <state relative-caret-position="191">
+          <caret line="2506" selection-start-line="2506" selection-end-line="2506" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/Methods.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/matplotlib/pyplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="314" column="4" selection-start-line="314" selection-start-column="4" selection-end-line="314" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/venv/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="117" column="19" selection-start-line="117" selection-start-column="19" selection-end-line="117" selection-end-column="19" />
+        <state relative-caret-position="1140">
+          <caret line="211" column="22" lean-forward="true" selection-start-line="211" selection-start-column="22" selection-end-line="211" selection-end-column="22" />
           <folding>
             <element signature="e#84#95#0" expanded="true" />
+            <element signature="e#254#335#0" />
+            <element signature="e#269#2628#0" />
+            <element signature="e#2860#2887#0" />
+            <element signature="e#3731#5015#0" />
+            <element signature="e#5979#6330#0" />
+            <element signature="e#6369#6722#0" />
+            <element signature="e#6761#7114#0" />
+            <element signature="e#7148#7501#0" />
+            <element signature="e#7536#7889#0" />
+            <element signature="e#5370#5475#0" />
           </folding>
         </state>
       </provider>

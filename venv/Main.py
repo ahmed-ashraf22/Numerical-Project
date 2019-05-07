@@ -6,7 +6,7 @@ Created on Mon Mar 25 00:53:21 2019
 """
 
 import _ssl
-from tkinter import *
+from Tkinter import *
 import matplotlib.pyplot as plt
 import numpy as np
 from functools import partial
@@ -92,18 +92,20 @@ class Main:
         self.current_method = value
 
     def solve(self):
+        global i
         global global_limits
+        i = -1
         formula_as_str = self.function_entry.get()
         max_iter = self.max_entry.get()
         x1 = self.x0_entry.get()
         x2 = self.x1_entry.get()
         eps = self.epsilon_entry.get()
         if self.current_method == "Bisection":
-            method = Bisection(formula_as_str, x1, x2, max_iter, eps)
+            method = BisectionAndFalsePosition(True, formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Newton-Raphson":
             method = NewtonRaphson(formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "False-Position":
-            method = FalsePosition(formula_as_str, x1, x2, max_iter, eps)
+            method = BisectionAndFalsePosition(False, formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Fixed Point":
             method = FixedPoint(formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Secant":
@@ -186,48 +188,6 @@ class Main:
         plt.show(block=False)
 
 
-class Bisection(object):
-    # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
-        self.x1 = float(x1)
-        self.x2 = float(x2)
-        self.max_iterations = int(max_iterations)
-        self.epsilon = float(epsilon)
-        self.formula_as_str = formula_as_str
-
-    def solve(self):
-        number_of_iterations = 0
-        errors = []
-        time = 0
-        values = []
-        limits = []
-        error = 100
-        if evaluate_equation(self.formula_as_str, self.x1) * evaluate_equation(self.formula_as_str, self.x2) > 0:
-            print("No Root")
-        for i in range(self.max_iterations):
-            number_of_iterations = number_of_iterations + 1
-            mid = (self.x1 + self.x2) / 2
-            values.append(mid)
-            limit = Limits(self.x1, self.x2, mid)
-            limits.append(limit)
-            if i != 0:
-                error = abs((mid - approximate_root) / mid)
-                errors.append(error)
-            approximate_root = mid
-
-            test = evaluate_equation(self.formula_as_str, self.x1) * evaluate_equation(self.formula_as_str, mid)
-            if test < 0:
-                self.x2 = mid
-            elif test > 0:
-                self.x1 = mid
-            if test == 0 or error < self.epsilon:
-                approximate_root = mid
-                break
-
-        precision = errors[-1]
-        return approximate_root, number_of_iterations, errors, time, precision, values, limits
-
-
 class Secant(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
@@ -252,16 +212,52 @@ class NewtonRaphson(object):
     # def solve(self):
 
 
-class FalsePosition(object):
+class BisectionAndFalsePosition(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+    def __init__(self, bisection, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
         self.x1 = float(x1)
         self.x2 = float(x2)
         self.max_iterations = int(max_iterations)
         self.epsilon = float(epsilon)
         self.formula_as_str = formula_as_str
+        self.bisection = bisection
 
-    # def solve(self):
+    def solve(self):
+        number_of_iterations = 0
+        errors = []
+        time = 0
+        values = []
+        limits = []
+        error = 100
+        fl = evaluate_equation(self.formula_as_str, self.x1)
+        fu = evaluate_equation(self.formula_as_str, self.x2)
+        if fl * fu > 0:
+            print("No Root")
+        for i in range(self.max_iterations):
+            number_of_iterations = number_of_iterations + 1
+            if not self.bisection:
+                mid = (self.x1 * fu - self.x2 * fl) / (fu - fl)
+            else:
+                mid = (self.x1 + self.x2) / 2
+            values.append(mid)
+            limit = Limits(self.x1, self.x2, mid)
+            limits.append(limit)
+            if i != 0:
+                error = abs((mid - approximate_root) / mid)
+                errors.append(error)
+            approximate_root = mid
+
+            test = evaluate_equation(self.formula_as_str, self.x1) * evaluate_equation(self.formula_as_str, mid)
+            if test < 0:
+                self.x2 = mid
+            elif test > 0:
+                self.x1 = mid
+            if test == 0 or error < self.epsilon:
+                approximate_root = mid
+                break
+
+        precision = errors[-1]
+        return approximate_root, number_of_iterations, errors, time, precision, values, limits
 
 
 class FixedPoint(object):

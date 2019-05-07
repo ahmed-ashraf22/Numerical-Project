@@ -6,7 +6,7 @@ Created on Mon Mar 25 00:53:21 2019
 """
 
 import _ssl
-from Tkinter import *
+from tkinter import *
 import matplotlib.pyplot as plt
 import numpy as np
 from functools import partial
@@ -29,7 +29,7 @@ class Main:
     def __init__(self, master):
         self.current_method = "Bisection"
         width = 800
-        height = 600
+        height = 700
         x = (master.winfo_screenwidth() // 2) - (width // 2)
         y = (master.winfo_screenheight() // 2) - (height // 2)
         master.geometry('{}x{}+{}+{}'.format(width, height, x, y))
@@ -144,6 +144,43 @@ class Main:
         p = Button(text="<--", command=self.left_arrow, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
         p.place(x=170, y=380)
 
+        root_label_title = Label(text="Approximated Root: ", font="verdana 10 bold", bg="#212F3C", pady=20,
+                                fg="#16A085")
+        root_label_title.place(x=50, y=410)
+
+        root_label = Label(text=result, font="verdana 10 bold", bg="#212F3C", pady=20,
+                           fg="#F5FFFA")
+        root_label.place(x=220, y=410)
+
+        number_of_iterations_label_title = Label(text="NO. Iterations: ", font="verdana 10 bold",
+                                                 bg="#212F3C", pady=20, fg="#16A085")
+        number_of_iterations_label_title.place(x=50, y=460)
+
+        number_of_iterations_label = Label(text=number_of_iterations, font="verdana 10 bold",
+                                           bg="#212F3C", pady=20, fg="#F5FFFA")
+        number_of_iterations_label.place(x=220, y=460)
+
+        precision_label_title = Label(text="Precision: ", font="verdana 10 bold", bg="#212F3C",
+                                      pady=20, fg="#16A085")
+        precision_label_title.place(x=50, y=510)
+
+        precision_label = Label(text=precision, font="verdana 10 bold", bg="#212F3C",
+                                pady=20, fg="#F5FFFA")
+        precision_label.place(x=220, y=510)
+
+        time_label_title = Label(text="Time: ", font="verdana 10 bold", bg="#212F3C",
+                                      pady=20, fg="#16A085")
+        time_label_title.place(x=50, y=560)
+
+        time_label = Label(text=time, font="verdana 10 bold", bg="#212F3C", pady=20, fg="#F5FFFA")
+        time_label.place(x=220, y=560)
+
+
+
+
+
+
+
     def right_arrow(self):
         global i
         global global_limits
@@ -154,8 +191,8 @@ class Main:
         point, mid = limit.get()
         plt.close('all')
         plt.figure(1)
-        plt.title("Bisection Method")
-        plt.xlabel("X")
+        plt.title("Iteration " + str(i+1))
+        plt.xlabel("X = " + str(mid))
         plt.ylabel("F(X)")
         plt.axvline(point[0])
         plt.axvline(point[1])
@@ -175,8 +212,8 @@ class Main:
         point, mid = limit.get()
         plt.close('all')
         plt.figure(1)
-        plt.title("Bisection Method")
-        plt.xlabel("X")
+        plt.title("Iteration " + str(i+1))
+        plt.xlabel("X = " + str(mid))
         plt.ylabel("F(X)")
         plt.axvline(point[0])
         plt.axvline(point[1])

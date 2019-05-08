@@ -29,6 +29,9 @@ i = -1
 class Main:
     # GUI init.
     def __init__(self, master):
+        global i
+        global global_limits
+        global errors
         self.current_method = "Bisection"
         width = 800
         height = 700
@@ -90,6 +93,8 @@ class Main:
                       fg="#16A085")
         label.place(x=200, y=10)
 
+        self.method = BisectionAndFalsePosition(True, "", 0, 0, 0, 0)
+
     def method_to_use(self, value):
         self.current_method = value
 
@@ -97,6 +102,7 @@ class Main:
         global i
         global global_limits
         global errors
+
         i = -1
         errors = []
         formula_as_str = self.function_entry.get()
@@ -104,20 +110,21 @@ class Main:
         x1 = self.x0_entry.get()
         x2 = self.x1_entry.get()
         eps = self.epsilon_entry.get()
+
         if self.current_method == "Bisection":
-            method = BisectionAndFalsePosition(True, formula_as_str, x1, x2, max_iter, eps)
+            self.method = BisectionAndFalsePosition(True, formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Newton-Raphson":
-            method = NewtonRaphson(formula_as_str, x1, max_iter, eps)
+            self.method = NewtonRaphson(formula_as_str, x1, max_iter, eps)
         elif self.current_method == "False-Position":
-            method = BisectionAndFalsePosition(False, formula_as_str, x1, x2, max_iter, eps)
+            self.method = BisectionAndFalsePosition(False, formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Fixed Point":
-            method = FixedPoint(formula_as_str, x1, x2, max_iter, eps)
+            self.method = FixedPoint(formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Secant":
-            method = Secant(formula_as_str, x1, x2, max_iter, eps)
+            self.method = Secant(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
         else:
-            method = BiergeVieta(formula_as_str, x1, x2, max_iter, eps)
+            self.method = BiergeVieta(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
         print(formula_as_str)
-        result, number_of_iterations, errors, time, precision, values, global_limits = method.solve()
+        result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
         print(result)
         print(number_of_iterations)
         print(errors)
@@ -188,19 +195,7 @@ class Main:
             i = len(global_limits) - 1
         limit = global_limits[i]
         point, mid = limit.get()
-        plt.close('all')
-        plt.figure(1)
-        plt.title("Iteration " + str(i+1) + "   Error: " + str(errors[i]))
-        plt.xlabel("X = " + str(mid))
-        plt.ylabel("F(X)")
-        plt.axvline(point[0])
-        plt.axvline(point[1])
-        plt.axvline(mid)
-        x1 = np.linspace(0, 0.12)
-        y1 = evaluate_equation(self.function_entry.get(), x1)
-        plt.ylim(-0.0003, 0.0003)
-        plt.plot(x1, y1, "r-*")
-        plt.show(block=False)
+        self.method.plot(point, mid, self.function_entry)
 
     def left_arrow(self):
         global i
@@ -211,19 +206,7 @@ class Main:
             i = 0
         limit = global_limits[i]
         point, mid = limit.get()
-        plt.close('all')
-        plt.figure(1)
-        plt.title("Iteration " + str(i+1) + "   Error: " + str(errors[i]))
-        plt.xlabel("X = " + str(mid))
-        plt.ylabel("F(X)")
-        plt.axvline(point[0])
-        plt.axvline(point[1])
-        plt.axvline(mid)
-        x1 = np.linspace(0, 0.12)
-        y1 = evaluate_equation(self.function_entry.get(), x1)
-        plt.ylim(-0.0003, 0.0003)
-        plt.plot(x1, y1, "r-*")
-        plt.show(block=False)
+        self.method.plot(point, mid, self.function_entry)
 
 
 class Secant(object):
@@ -318,6 +301,26 @@ class BisectionAndFalsePosition(object):
 
         precision = errors[-1]
         return approximate_root, number_of_iterations, errors, time, precision, values, limits
+
+    def plot(self, point, mid, function_entry):
+        global i
+        global errors
+        plt.close('all')
+        plt.figure(1)
+        if i == 0:
+            plt.title("Iteration " + str(i + 1))
+        else:
+            plt.title("Iteration " + str(i + 1) + "   Error: " + str(errors[i - 1]))
+        plt.xlabel("X = " + str(mid))
+        plt.ylabel("F(X)")
+        plt.axvline(point[0])
+        plt.axvline(point[1])
+        plt.axvline(mid)
+        x1 = np.linspace(0, 0.12)
+        y1 = evaluate_equation(function_entry.get(), x1)
+        plt.ylim(-0.0003, 0.0003)
+        plt.plot(x1, y1, "r-*")
+        plt.show(block=False)
 
 
 class FixedPoint(object):

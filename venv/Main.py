@@ -94,6 +94,7 @@ class Main:
         label.place(x=200, y=10)
 
         self.method = BisectionAndFalsePosition(True, "", 0, 0, 0, 0)
+        self.result = 0
 
     def method_to_use(self, value):
         self.current_method = value
@@ -124,8 +125,8 @@ class Main:
         else:
             self.method = BiergeVieta(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
         print(formula_as_str)
-        result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
-        print(result)
+        self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
+        print(self.result)
         print(number_of_iterations)
         print(errors)
         print(time)
@@ -159,7 +160,7 @@ class Main:
                                  pady=20, fg="#16A085")
         root_label_title.place(x=50, y=410)
 
-        root_label = Label(text=result, font="verdana 10 bold", bg="#212F3C", pady=20,
+        root_label = Label(text=self.result, font="verdana 10 bold", bg="#212F3C", pady=20,
                            fg="#F5FFFA")
         root_label.place(x=220, y=410)
 
@@ -195,7 +196,10 @@ class Main:
             i = len(global_limits) - 1
         limit = global_limits[i]
         point, mid = limit.get()
-        self.method.plot(point, mid, self.function_entry)
+        if self.current_method == "Bisection":
+            self.method.plot(point, mid, self.function_entry)
+        elif self.current_method == "Newton-Raphson":
+            self.method.plot(point, self.function_entry, self.result)
 
     def left_arrow(self):
         global i
@@ -206,7 +210,10 @@ class Main:
             i = 0
         limit = global_limits[i]
         point, mid = limit.get()
-        self.method.plot(point, mid, self.function_entry)
+        if self.current_method == "Bisection":
+            self.method.plot(point, mid, self.function_entry)
+        elif self.current_method == "Newton-Raphson":
+            self.method.plot(point, self.function_entry, self.result)
 
 
 class Secant(object):
@@ -250,9 +257,34 @@ class NewtonRaphson(object):
             if error < self.epsilon:
                 approximate_root = x1
                 break
+            limit = Limits(x0, x1, 0)
+            limits.append(limit)
             x0 = x1
         precision = errors[-1]
         return approximate_root, number_of_iterations, errors, time, precision, values, limits
+
+    def plot(self, point, function_entry, approximate_root):
+        global i
+        global errors
+        first_tangent_point = [point[0], point[1]]
+        second_tangent_point = [evaluate_equation(function_entry.get(), point[0]),
+                                evaluate_equation(function_entry.get(), point[1])]
+        plt.close('all')
+        plt.figure(1)
+        if i == 0:
+            plt.title("Iteration " + str(i + 1))
+        else:
+            plt.title("Iteration " + str(i + 1) + "   Error: " + str(errors[i - 1]))
+        plt.xlabel("X = " + str(point[1]))
+        plt.ylabel("F(X)")
+        plt.axvline(point[0])
+        plt.axvline(point[1])
+        x1 = np.linspace(0, 0.12)
+        y1 = evaluate_equation(function_entry.get(), x1)
+        plt.ylim(-0.0003, 0.0003)
+        plt.plot(x1, y1, "r-")
+        plt.plot(first_tangent_point, second_tangent_point, "g^")
+        plt.show(block=False)
 
 
 class BisectionAndFalsePosition(object):

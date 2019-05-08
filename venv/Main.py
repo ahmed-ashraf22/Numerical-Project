@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from functools import partial
 import parser
+from sympy import *
 
 
 # TODO : adding trigonometry parsing
@@ -106,7 +107,7 @@ class Main:
         if self.current_method == "Bisection":
             method = BisectionAndFalsePosition(True, formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Newton-Raphson":
-            method = NewtonRaphson(formula_as_str, x1, x2, max_iter, eps)
+            method = NewtonRaphson(formula_as_str, x1, max_iter, eps)
         elif self.current_method == "False-Position":
             method = BisectionAndFalsePosition(False, formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Fixed Point":
@@ -147,8 +148,8 @@ class Main:
         p = Button(text="<--", command=self.left_arrow, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
         p.place(x=170, y=380)
 
-        root_label_title = Label(text="Approximated Root: ", font="verdana 10 bold", bg="#212F3C", pady=20,
-                                fg="#16A085")
+        root_label_title = Label(text="Approximated Root: ", font="verdana 10 bold", bg="#212F3C",
+                                 pady=20, fg="#16A085")
         root_label_title.place(x=50, y=410)
 
         root_label = Label(text=result, font="verdana 10 bold", bg="#212F3C", pady=20,
@@ -177,12 +178,6 @@ class Main:
 
         time_label = Label(text=time, font="verdana 10 bold", bg="#212F3C", pady=20, fg="#F5FFFA")
         time_label.place(x=220, y=560)
-
-
-
-
-
-
 
     def right_arrow(self):
         global i
@@ -245,14 +240,36 @@ class Secant(object):
 
 class NewtonRaphson(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+    def __init__(self, formula_as_str, x1, max_iterations=50, epsilon=0.00001):
         self.x1 = float(x1)
-        self.x2 = float(x2)
         self.max_iterations = int(max_iterations)
         self.epsilon = float(epsilon)
         self.formula_as_str = formula_as_str
 
-    # def solve(self):
+    def solve(self):
+        global errors
+        number_of_iterations = 0
+        time = 0
+        values = []
+        limits = []
+        error = 100
+        x = Symbol('x')
+        f = x ** 3 - 0.165 * x ** 2 + 3.993 * 10 ** -4
+        f_prime = Derivative(f, x)
+        x0 = self.x1
+        for i1 in range(self.max_iterations):
+            number_of_iterations = number_of_iterations + 1
+            x1 = x0 - (f.doit().subs({x: x0}) / f_prime.doit().subs({x: x0}))
+            values.append(x1)
+            if i1 != 0:
+                error = abs((x1 - x0) / x1)
+                errors.append(error)
+            if error < self.epsilon:
+                approximate_root = x1
+                break
+            x0 = x1
+        precision = errors[-1]
+        return approximate_root, number_of_iterations, errors, time, precision, values, limits
 
 
 class BisectionAndFalsePosition(object):
@@ -276,7 +293,7 @@ class BisectionAndFalsePosition(object):
         fu = evaluate_equation(self.formula_as_str, self.x2)
         if fl * fu > 0:
             print("No Root")
-        for i in range(self.max_iterations):
+        for i1 in range(self.max_iterations):
             number_of_iterations = number_of_iterations + 1
             if not self.bisection:
                 mid = (self.x1 * fu - self.x2 * fl) / (fu - fl)
@@ -285,7 +302,7 @@ class BisectionAndFalsePosition(object):
             values.append(mid)
             limit = Limits(self.x1, self.x2, mid)
             limits.append(limit)
-            if i != 0:
+            if i1 != 0:
                 error = abs((mid - approximate_root) / mid)
                 errors.append(error)
             approximate_root = mid

@@ -21,6 +21,7 @@ def evaluate_equation(formula, x):
 
 # global variables
 global_limits = []
+errors = []
 i = -1
 
 
@@ -94,7 +95,9 @@ class Main:
     def solve(self):
         global i
         global global_limits
+        global errors
         i = -1
+        errors = []
         formula_as_str = self.function_entry.get()
         max_iter = self.max_entry.get()
         x1 = self.x0_entry.get()
@@ -184,6 +187,7 @@ class Main:
     def right_arrow(self):
         global i
         global global_limits
+        global errors
         i = i + 1
         if i >= len(global_limits):
             i = len(global_limits) - 1
@@ -191,7 +195,7 @@ class Main:
         point, mid = limit.get()
         plt.close('all')
         plt.figure(1)
-        plt.title("Iteration " + str(i+1))
+        plt.title("Iteration " + str(i+1) + "   Error: " + str(errors[i]))
         plt.xlabel("X = " + str(mid))
         plt.ylabel("F(X)")
         plt.axvline(point[0])
@@ -205,6 +209,8 @@ class Main:
 
     def left_arrow(self):
         global i
+        global global_limits
+        global errors
         i = i - 1
         if i < 0:
             i = 0
@@ -212,7 +218,7 @@ class Main:
         point, mid = limit.get()
         plt.close('all')
         plt.figure(1)
-        plt.title("Iteration " + str(i+1))
+        plt.title("Iteration " + str(i+1) + "   Error: " + str(errors[i]))
         plt.xlabel("X = " + str(mid))
         plt.ylabel("F(X)")
         plt.axvline(point[0])
@@ -260,8 +266,8 @@ class BisectionAndFalsePosition(object):
         self.bisection = bisection
 
     def solve(self):
+        global errors
         number_of_iterations = 0
-        errors = []
         time = 0
         values = []
         limits = []

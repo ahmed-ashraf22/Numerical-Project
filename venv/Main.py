@@ -118,13 +118,13 @@ class Main:
         file_mode = True
         i = -1
         errors = []
-        formula_as_str = ""
+        self.formula_as_str = ""
         max_iter = 50
         x1 = ""
         x2 = ""
         eps = 0.00001
         if not file_mode:
-            formula_as_str = self.function_entry.get()
+            self.formula_as_str = self.function_entry.get()
             max_iter = self.max_entry.get()
             x1 = self.x0_entry.get()
             x2 = self.x1_entry.get()
@@ -134,7 +134,7 @@ class Main:
             file_name = self.file_entry.get()
             file = open(file_name, "r+")
             formula_as_str_list = file.readline().splitlines()
-            formula_as_str = formula_as_str_list[0]
+            self.formula_as_str = formula_as_str_list[0]
             current_method_list = file.readline().splitlines()
             self.current_method = current_method_list[0]
             x = file.readline()
@@ -146,18 +146,18 @@ class Main:
             x2 = float_numbers[1]
 
         if self.current_method == "Bisection":
-            self.method = BisectionAndFalsePosition(True, formula_as_str, x1, x2, max_iter, eps)
+            self.method = BisectionAndFalsePosition(True, self.formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Newton-Raphson":
-            self.method = NewtonRaphson(formula_as_str, x1, max_iter, eps)
+            self.method = NewtonRaphson(self.formula_as_str, x1, max_iter, eps)
         elif self.current_method == "False-Position":
-            self.method = BisectionAndFalsePosition(False, formula_as_str, x1, x2, max_iter, eps)
+            self.method = BisectionAndFalsePosition(False, self.formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Fixed Point":
-            self.method = FixedPoint(formula_as_str, x1, max_iter, eps)
+            self.method = FixedPoint(self.formula_as_str, x1, max_iter, eps)
         elif self.current_method == "Secant":
             self.method = Secant(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
         else:
             self.method = BiergeVieta(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
-        print(formula_as_str)
+        print(self.formula_as_str)
         self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
         print(self.result)
         print(number_of_iterations)
@@ -174,7 +174,7 @@ class Main:
         plt.xlabel("X")
         plt.ylabel("F(X)")
         x1 = np.linspace(0, 0.12)
-        y1 = evaluate_equation(formula_as_str, x1)
+        y1 = evaluate_equation(self.formula_as_str, x1)
         plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "b-*")
         plt.show(block=False)
@@ -230,13 +230,13 @@ class Main:
         limit = global_limits[i]
         point, mid = limit.get()
         if (self.current_method == "Bisection") | (self.current_method == "False-Position"):
-            self.method.plot(point, mid, self.function_entry)
+            self.method.plot(point, mid, self.formula_as_str)
         elif self.current_method == "Newton-Raphson":
-            self.method.plot(point, self.function_entry)
+            self.method.plot(point, self.formula_as_str)
         elif self.current_method == "Fixed Point":
-            self.method.plot(point, self.function_entry)
+            self.method.plot(point, self.formula_as_str)
         elif self.current_method == "Secant":
-            self.method.plot(point, mid, self.function_entry)
+            self.method.plot(point, mid, self.formula_as_str)
 
     def left_arrow(self):
         global i
@@ -248,11 +248,11 @@ class Main:
         limit = global_limits[i]
         point, mid = limit.get()
         if (self.current_method == "Bisection") | (self.current_method == "False-Position"):
-            self.method.plot(point, mid, self.function_entry)
+            self.method.plot(point, mid, self.formula_as_str)
         elif self.current_method == "Newton-Raphson":
-            self.method.plot(point, self.function_entry)
+            self.method.plot(point, self.formula_as_str)
         elif self.current_method == "Secant":
-            self.method.plot(point, mid, self.function_entry)
+            self.method.plot(point, mid, self.formula_as_str)
 
 
 class Secant(object):
@@ -292,12 +292,12 @@ class Secant(object):
         precision = errors[-1]
         return approximate_root, number_of_iterations, errors, time, precision, values, limits
 
-    def plot(self, point, x2, function_entry):
+    def plot(self, point, x2, formula_as_str):
         global i
         global errors
         x_axis = [point[0], point[1], x2]
-        y_axis = [evaluate_equation(function_entry.get(), point[0]), evaluate_equation(function_entry.get(), point[1]),
-                  evaluate_equation(function_entry.get(), x2)]
+        y_axis = [evaluate_equation(formula_as_str, point[0]), evaluate_equation(formula_as_str, point[1]),
+                  evaluate_equation(formula_as_str, x2)]
         plt.close('all')
         plt.figure(1)
         if i == 0:
@@ -310,7 +310,7 @@ class Secant(object):
         plt.axvline(point[1])
         plt.axvline(x2)
         x1 = np.linspace(0, 2)
-        y1 = evaluate_equation(function_entry.get(), x1)
+        y1 = evaluate_equation(formula_as_str, x1)
         plt.ylim(-2, 2)
         plt.plot(x1, y1, "r-")
         plt.plot(x_axis, y_axis, "g^")
@@ -352,12 +352,12 @@ class NewtonRaphson(object):
         precision = errors[-1]
         return approximate_root, number_of_iterations, errors, time, precision, values, limits
 
-    def plot(self, point, function_entry):
+    def plot(self, point, formula_as_str):
         global i
         global errors
         first_tangent_point = [point[0], point[1]]
-        second_tangent_point = [evaluate_equation(function_entry.get(), point[0]),
-                                evaluate_equation(function_entry.get(), point[1])]
+        second_tangent_point = [evaluate_equation(formula_as_str, point[0]),
+                                evaluate_equation(formula_as_str, point[1])]
         plt.close('all')
         plt.figure(1)
         if i == 0:
@@ -369,7 +369,7 @@ class NewtonRaphson(object):
         plt.axvline(point[0])
         plt.axvline(point[1])
         x1 = np.linspace(0, 0.12)
-        y1 = evaluate_equation(function_entry.get(), x1)
+        y1 = evaluate_equation(formula_as_str, x1)
         plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "r-")
         plt.plot(first_tangent_point, second_tangent_point, 1, "g^")
@@ -425,7 +425,7 @@ class BisectionAndFalsePosition(object):
         precision = errors[-1]
         return approximate_root, number_of_iterations, errors, time, precision, values, limits
 
-    def plot(self, point, mid, function_entry):
+    def plot(self, point, mid, formula_as_str):
         global i
         global errors
         plt.close('all')
@@ -440,13 +440,13 @@ class BisectionAndFalsePosition(object):
         plt.axvline(point[1])
         plt.axvline(mid)
         x1 = np.linspace(0, 0.12)
-        y1 = evaluate_equation(function_entry.get(), x1)
+        y1 = evaluate_equation(formula_as_str, x1)
         plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "r-*")
         if not self.bisection:
             first_tangent_point = [point[0], point[1]]
-            second_tangent_point = [evaluate_equation(function_entry.get(), point[0]),
-                                    evaluate_equation(function_entry.get(), point[1])]
+            second_tangent_point = [evaluate_equation(formula_as_str, point[0]),
+                                    evaluate_equation(formula_as_str, point[1])]
             plt.plot(first_tangent_point, second_tangent_point, 1, "g^")
         plt.show(block=False)
 

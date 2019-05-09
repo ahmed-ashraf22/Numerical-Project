@@ -12,6 +12,7 @@ import numpy as np
 from functools import partial
 import parser
 from sympy import *
+from sympy.parsing.sympy_parser import parse_expr
 
 
 # TODO : adding trigonometry parsing
@@ -82,7 +83,7 @@ class Main:
         tkvar = StringVar(master)
 
         # Dictionary with options
-        choices = {'Bisection', 'False-Position', 'Fixed Point', 'Newton-Raphson', 'Secant', 'Bierge-Vieta'}
+        choices = {'Bisection', 'False-Position', 'Fixed Point', 'Newton-Raphson', 'Secant', 'Birge-Vieta'}
         tkvar.set('Bisection')  # set the default option
 
         self.popupMenu = OptionMenu(master, tkvar, *choices, command=self.method_to_use)
@@ -119,11 +120,11 @@ class Main:
         elif self.current_method == "False-Position":
             self.method = BisectionAndFalsePosition(False, formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Fixed Point":
-            self.method = FixedPoint(formula_as_str, x1, x2, max_iter, eps)
+            self.method = FixedPoint(formula_as_str, x1, max_iter, eps)
         elif self.current_method == "Secant":
-            self.method = Secant(formula_as_str, x1, x2, max_iter, eps)
+            self.method = Secant(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
         else:
-            self.method = BiergeVieta(formula_as_str, x1, x2, max_iter, eps)
+            self.method = BiergeVieta(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
         print(formula_as_str)
         self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
         print(self.result)
@@ -181,7 +182,7 @@ class Main:
         precision_label.place(x=220, y=510)
 
         time_label_title = Label(text="Time: ", font="verdana 10 bold", bg="#212F3C",
-                                      pady=20, fg="#16A085")
+                                 pady=20, fg="#16A085")
         time_label_title.place(x=50, y=560)
 
         time_label = Label(text=time, font="verdana 10 bold", bg="#212F3C", pady=20, fg="#F5FFFA")
@@ -196,10 +197,12 @@ class Main:
             i = len(global_limits) - 1
         limit = global_limits[i]
         point, mid = limit.get()
-        if self.current_method == "Bisection":
+        if (self.current_method == "Bisection") | (self.current_method == "False-Position"):
             self.method.plot(point, mid, self.function_entry)
         elif self.current_method == "Newton-Raphson":
-            self.method.plot(point, self.function_entry, self.result)
+            self.method.plot(point, self.function_entry)
+        elif self.current_method == "Fixed Point":
+            self.method.plot(point, self.function_entry)
         elif self.current_method == "Secant":
             self.method.plot(point, mid, self.function_entry)
 
@@ -212,10 +215,10 @@ class Main:
             i = 0
         limit = global_limits[i]
         point, mid = limit.get()
-        if self.current_method == "Bisection":
+        if (self.current_method == "Bisection") | (self.current_method == "False-Position"):
             self.method.plot(point, mid, self.function_entry)
         elif self.current_method == "Newton-Raphson":
-            self.method.plot(point, self.function_entry, self.result)
+            self.method.plot(point, self.function_entry)
         elif self.current_method == "Secant":
             self.method.plot(point, mid, self.function_entry)
 
@@ -298,7 +301,7 @@ class NewtonRaphson(object):
         limits = []
         error = 100
         x = Symbol('x')
-        f = x ** 3 - 0.165 * x ** 2 + 3.993 * 10 ** -4
+        f = parse_expr(self.formula_as_str)
         f_prime = Derivative(f, x)
         x0 = self.x1
         for i1 in range(self.max_iterations):
@@ -317,7 +320,7 @@ class NewtonRaphson(object):
         precision = errors[-1]
         return approximate_root, number_of_iterations, errors, time, precision, values, limits
 
-    def plot(self, point, function_entry, approximate_root):
+    def plot(self, point, function_entry):
         global i
         global errors
         first_tangent_point = [point[0], point[1]]
@@ -337,7 +340,7 @@ class NewtonRaphson(object):
         y1 = evaluate_equation(function_entry.get(), x1)
         plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "r-")
-        plt.plot(first_tangent_point, second_tangent_point, "g^")
+        plt.plot(first_tangent_point, second_tangent_point, 1, "g^")
         plt.show(block=False)
 
 
@@ -363,6 +366,8 @@ class BisectionAndFalsePosition(object):
         if fl * fu > 0:
             print("No Root")
         for i1 in range(self.max_iterations):
+            fl = evaluate_equation(self.formula_as_str, self.x1)
+            fu = evaluate_equation(self.formula_as_str, self.x2)
             number_of_iterations = number_of_iterations + 1
             if not self.bisection:
                 mid = (self.x1 * fu - self.x2 * fl) / (fu - fl)
@@ -406,22 +411,55 @@ class BisectionAndFalsePosition(object):
         y1 = evaluate_equation(function_entry.get(), x1)
         plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "r-*")
+        if not self.bisection:
+            first_tangent_point = [point[0], point[1]]
+            second_tangent_point = [evaluate_equation(function_entry.get(), point[0]),
+                                    evaluate_equation(function_entry.get(), point[1])]
+            plt.plot(first_tangent_point, second_tangent_point, 1, "g^")
         plt.show(block=False)
 
 
 class FixedPoint(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
-    def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+    def __init__(self, formula_as_str, x1, max_iterations=50, epsilon=0.00001):
         self.x1 = float(x1)
-        self.x2 = float(x2)
         self.max_iterations = int(max_iterations)
         self.epsilon = float(epsilon)
         self.formula_as_str = formula_as_str
+        self.x = Symbol('x')
+        self.expression = parse_expr(self.formula_as_str + "- x")
 
-    # def solve(self):
+    def solve(self):
+        global errors
+        number_of_iterations = 0
+        time = 0
+        values = []
+        limits = []
+        error = 100
+        x0 = self.x1
+        x = Symbol('x')
+        coeff = Poly(self.formula_as_str, x).all_coeffs()
+        coeff = coeff[-2]
+        self.formula_as_str = self.formula_as_str + "-" + str(coeff) + "*x"
+        div = -float(1 / coeff)
+        for i1 in range(self.max_iterations):
+            number_of_iterations = number_of_iterations + 1
+            x1 = evaluate_equation(self.formula_as_str, x0) * div
+            values.append(x1)
+            approximate_root = x1
+            if i1 != 0:
+                error = abs((x1 - x0) / x1)
+                errors.append(error)
+            if error < self.epsilon:
+                break
+            limit = Limits(x0, x1, 0)
+            limits.append(limit)
+            x0 = x1
+        precision = errors[-1]
+        return approximate_root, number_of_iterations, errors, time, precision, values, limits
 
 
-class BiergeVieta(object):
+class BirgeVieta(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
         self.x1 = float(x1)

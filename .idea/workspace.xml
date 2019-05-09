@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/venv/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="384">
-              <caret line="285" column="63" selection-start-line="285" selection-start-column="63" selection-end-line="285" selection-end-column="63" />
+            <state relative-caret-position="-211">
+              <caret line="206" column="16" lean-forward="true" selection-start-line="206" selection-start-column="16" selection-end-line="206" selection-end-column="16" />
               <folding>
                 <element signature="e#84#95#0" expanded="true" />
               </folding>
@@ -28,7 +28,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/Anaconda3/envs/tensorflow/Lib/tkinter/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
+            <state relative-caret-position="26435">
               <caret line="1557" selection-start-line="1557" selection-end-line="1557" />
             </state>
           </provider>
@@ -84,6 +84,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -100,7 +101,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -270,7 +270,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.20949264" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.2569558" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.2111293" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -328,27 +328,27 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/venv/pyvenv.cfg" />
-    <entry file="file://$PROJECT_DIR$/venv/temp.py">
+    <entry file="file://$PROJECT_DIR$/venv/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="25" selection-start-line="7" selection-end-line="8" selection-end-column="25" />
+        <state relative-caret-position="-211">
+          <caret line="206" column="16" lean-forward="true" selection-start-line="206" selection-start-column="16" selection-end-line="206" selection-end-column="16" />
+          <folding>
+            <element signature="e#84#95#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Anaconda3/envs/tensorflow/Lib/tkinter/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
+        <state relative-caret-position="26435">
           <caret line="1557" selection-start-line="1557" selection-end-line="1557" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/venv/Main.py">
+    <entry file="file://$PROJECT_DIR$/venv/temp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="285" column="63" selection-start-line="285" selection-start-column="63" selection-end-line="285" selection-end-column="63" />
-          <folding>
-            <element signature="e#84#95#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="136">
+          <caret line="8" column="25" selection-start-line="7" selection-end-line="8" selection-end-column="25" />
         </state>
       </provider>
     </entry>

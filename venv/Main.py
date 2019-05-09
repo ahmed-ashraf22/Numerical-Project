@@ -121,9 +121,9 @@ class Main:
         elif self.current_method == "Fixed Point":
             self.method = FixedPoint(formula_as_str, x1, x2, max_iter, eps)
         elif self.current_method == "Secant":
-            self.method = Secant(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
+            self.method = Secant(formula_as_str, x1, x2, max_iter, eps)
         else:
-            self.method = BiergeVieta(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
+            self.method = BiergeVieta(formula_as_str, x1, x2, max_iter, eps)
         print(formula_as_str)
         self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
         print(self.result)
@@ -200,6 +200,8 @@ class Main:
             self.method.plot(point, mid, self.function_entry)
         elif self.current_method == "Newton-Raphson":
             self.method.plot(point, self.function_entry, self.result)
+        elif self.current_method == "Secant":
+            self.method.plot(point, mid, self.function_entry)
 
     def left_arrow(self):
         global i
@@ -214,6 +216,8 @@ class Main:
             self.method.plot(point, mid, self.function_entry)
         elif self.current_method == "Newton-Raphson":
             self.method.plot(point, self.function_entry, self.result)
+        elif self.current_method == "Secant":
+            self.method.plot(point, mid, self.function_entry)
 
 
 class Secant(object):
@@ -225,7 +229,57 @@ class Secant(object):
         self.epsilon = float(epsilon)
         self.formula_as_str = formula_as_str
 
-    # def solve(self):
+    def solve(self):
+        # x ** 2 - 2 (Test)
+        global errors
+        number_of_iterations = 0
+        time = 0
+        values = []
+        limits = []
+        error = 100
+        x0 = self.x1
+        x1 = self.x2
+        for i1 in range(self.max_iterations):
+            number_of_iterations = number_of_iterations + 1
+            x2 = x1 - ((evaluate_equation(self.formula_as_str, x1) * (x1 - x0)) /
+                       (evaluate_equation(self.formula_as_str, x1) - evaluate_equation(self.formula_as_str, x0)))
+            values.append(x2)
+            if i1 != 0:
+                error = abs((x2 - x1) / x2)
+                errors.append(error)
+            if error < self.epsilon:
+                approximate_root = x2
+                break
+            limit = Limits(x0, x1, x2)
+            limits.append(limit)
+            x0 = x1
+            x1 = x2
+        precision = errors[-1]
+        return approximate_root, number_of_iterations, errors, time, precision, values, limits
+
+    def plot(self, point, x2, function_entry):
+        global i
+        global errors
+        x_axis = [point[0], point[1], x2]
+        y_axis = [evaluate_equation(function_entry.get(), point[0]), evaluate_equation(function_entry.get(), point[1]),
+                  evaluate_equation(function_entry.get(), x2)]
+        plt.close('all')
+        plt.figure(1)
+        if i == 0:
+            plt.title("Iteration " + str(i + 1))
+        else:
+            plt.title("Iteration " + str(i + 1) + "   Error: " + str(errors[i - 1]))
+        plt.xlabel("X = " + str(point[1]))
+        plt.ylabel("F(X)")
+        plt.axvline(point[0])
+        plt.axvline(point[1])
+        plt.axvline(x2)
+        x1 = np.linspace(0, 2)
+        y1 = evaluate_equation(function_entry.get(), x1)
+        plt.ylim(-2, 2)
+        plt.plot(x1, y1, "r-")
+        plt.plot(x_axis, y_axis, "g^")
+        plt.show(block=False)
 
 
 class NewtonRaphson(object):

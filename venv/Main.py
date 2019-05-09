@@ -13,6 +13,7 @@ from functools import partial
 import parser
 from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
+from matplotlib.ticker import NullFormatter
 
 
 # TODO : adding trigonometry parsing
@@ -154,9 +155,9 @@ class Main:
         elif self.current_method == "Fixed Point":
             self.method = FixedPoint(self.formula_as_str, x1, max_iter, eps)
         elif self.current_method == "Secant":
-            self.method = Secant(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
+            self.method = Secant(self.formula_as_str, x1, x2, max_iter, eps)
         else:
-            self.method = BiergeVieta(self.formula_as_str, self.x1, self.x2, self.max_iter, self.eps)
+            self.method = BiergeVieta(self.formula_as_str, x1, x2, max_iter, eps)
         print(self.formula_as_str)
         self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
         print(self.result)
@@ -237,6 +238,8 @@ class Main:
             self.method.plot(point, self.formula_as_str)
         elif self.current_method == "Secant":
             self.method.plot(point, mid, self.formula_as_str)
+        elif self.current_method == "Fixed Point":
+            self.method.plot(point[1], self.formula_as_str)
 
     def left_arrow(self):
         global i
@@ -253,6 +256,8 @@ class Main:
             self.method.plot(point, self.formula_as_str)
         elif self.current_method == "Secant":
             self.method.plot(point, mid, self.formula_as_str)
+        elif self.current_method == "Fixed Point":
+            self.method.plot(point[1], self.formula_as_str)
 
 
 class Secant(object):
@@ -296,8 +301,7 @@ class Secant(object):
         global i
         global errors
         x_axis = [point[0], point[1], x2]
-        y_axis = [evaluate_equation(formula_as_str, point[0]), evaluate_equation(formula_as_str, point[1]),
-                  evaluate_equation(formula_as_str, x2)]
+        y_axis = [evaluate_equation(formula_as_str, point[0]), evaluate_equation(formula_as_str, point[1]), 0]
         plt.close('all')
         plt.figure(1)
         if i == 0:
@@ -309,11 +313,11 @@ class Secant(object):
         plt.axvline(point[0])
         plt.axvline(point[1])
         plt.axvline(x2)
-        x1 = np.linspace(0, 2)
+        space = ((point[1] - point[0]) * 0.5)
+        x1 = np.linspace(point[0] - space, point[1] + space)
         y1 = evaluate_equation(formula_as_str, x1)
-        plt.ylim(-2, 2)
         plt.plot(x1, y1, "r-")
-        plt.plot(x_axis, y_axis, "g^")
+        plt.plot(x_axis, y_axis, 1, "g")
         plt.show(block=False)
 
 
@@ -339,6 +343,7 @@ class NewtonRaphson(object):
         for i1 in range(self.max_iterations):
             number_of_iterations = number_of_iterations + 1
             x1 = x0 - (f.doit().subs({x: x0}) / f_prime.doit().subs({x: x0}))
+            x1 = float(x1)
             values.append(x1)
             if i1 != 0:
                 error = abs((x1 - x0) / x1)
@@ -368,9 +373,9 @@ class NewtonRaphson(object):
         plt.ylabel("F(X)")
         plt.axvline(point[0])
         plt.axvline(point[1])
-        x1 = np.linspace(0, 0.12)
+        space = ((point[1]-point[0]) * 0.5)
+        x1 = np.linspace(point[0] - space, point[1] + space)
         y1 = evaluate_equation(formula_as_str, x1)
-        plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "r-")
         plt.plot(first_tangent_point, second_tangent_point, 1, "g^")
         plt.show(block=False)
@@ -439,9 +444,9 @@ class BisectionAndFalsePosition(object):
         plt.axvline(point[0])
         plt.axvline(point[1])
         plt.axvline(mid)
-        x1 = np.linspace(0, 0.12)
+        space = ((point[1] - point[0]) * 0.5)
+        x1 = np.linspace(point[0] - space, point[1] + space)
         y1 = evaluate_equation(formula_as_str, x1)
-        plt.ylim(-0.0003, 0.0003)
         plt.plot(x1, y1, "r-*")
         if not self.bisection:
             first_tangent_point = [point[0], point[1]]
@@ -489,6 +494,22 @@ class FixedPoint(object):
             x0 = x1
         precision = errors[-1]
         return approximate_root, number_of_iterations, errors, time, precision, values, limits
+
+    def plot(self, a_root, formula_as_str):
+        plt.close('all')
+        plt.figure(1)
+        plt.title("Fixed Point")
+        plt.xlabel("X = " + str(a_root))
+        plt.ylabel("F(X)")
+        plt.axvline(a_root)
+        x1 = np.linspace(0, 6)
+        x2 = np.linspace(0, 6)
+        y2 = evaluate_equation("x", x2)
+        y1 = evaluate_equation(formula_as_str, x1)
+        plt.plot(x1, y1, "r-*")
+        plt.plot(x2, y2, "r-*")
+        plt.show(block=False)
+
 
 
 class BirgeVieta(object):

@@ -92,7 +92,18 @@ class Main:
 
         label = Label(master, text="#.# Numerical Methods #.#", font="verdana 20 bold", bg="#212F3C", pady=20,
                       fg="#16A085")
-        label.place(x=200, y=10)
+        label.place(x=200, y=0)
+
+        label = Label(master, text="Read from file (Insert file name) :", font="verdana 10 bold", bg="#212F3C", pady=20,
+                      fg="#16A085")
+        label.place(x=50, y=50)
+
+        label = Label(master, text="(OR)", font="verdana 10 bold", bg="#212F3C", pady=20,
+                      fg="#16A085")
+        label.place(x=0, y=70)
+
+        self.file_entry = Entry(master)
+        self.file_entry.place(x=320, y=70, width=100)
 
         self.method = BisectionAndFalsePosition(True, "", 0, 0, 0, 0)
         self.result = 0
@@ -104,14 +115,35 @@ class Main:
         global i
         global global_limits
         global errors
-
+        file_mode = True
         i = -1
         errors = []
-        formula_as_str = self.function_entry.get()
-        max_iter = self.max_entry.get()
-        x1 = self.x0_entry.get()
-        x2 = self.x1_entry.get()
-        eps = self.epsilon_entry.get()
+        formula_as_str = ""
+        max_iter = 50
+        x1 = ""
+        x2 = ""
+        eps = 0.00001
+        if not file_mode:
+            formula_as_str = self.function_entry.get()
+            max_iter = self.max_entry.get()
+            x1 = self.x0_entry.get()
+            x2 = self.x1_entry.get()
+            eps = self.epsilon_entry.get()
+        # Reading from file
+        if file_mode:
+            file_name = self.file_entry.get()
+            file = open(file_name, "r+")
+            formula_as_str_list = file.readline().splitlines()
+            formula_as_str = formula_as_str_list[0]
+            current_method_list = file.readline().splitlines()
+            self.current_method = current_method_list[0]
+            x = file.readline()
+            x = x.split()
+            float_numbers = []
+            for item in x:
+                float_numbers.append(float(item))
+            x1 = float_numbers[0]
+            x2 = float_numbers[1]
 
         if self.current_method == "Bisection":
             self.method = BisectionAndFalsePosition(True, formula_as_str, x1, x2, max_iter, eps)

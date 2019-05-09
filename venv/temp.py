@@ -1,12 +1,19 @@
-from sympy import *
 
 
-x= Symbol('x')
+file = open("myfile.txt", "r+")
 
-function = x**4 + 7*x**3 + 8
+function = file.readline()
 
-deriv= Derivative(function, x)
-deriv.doit().subs({x: 4})
+method = file.readline()
 
-print(function.doit().subs({x: 4}))
-print(deriv.doit().subs({x: 4}))
+x = file1.readline()
+x = x.split()
+float_numbers = []
+for item in x:
+    float_numbers.append(float(item))
+
+x1 = float_numbers[0]
+x2 = float_numbers[1]
+
+
+

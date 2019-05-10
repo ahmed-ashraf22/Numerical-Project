@@ -373,7 +373,7 @@ class NewtonRaphson(object):
         plt.ylabel("F(X)")
         plt.axvline(point[0])
         plt.axvline(point[1])
-        space = ((point[1]-point[0]) * 0.5)
+        space = ((point[1]-point[0]) * 4)
         x1 = np.linspace(point[0] - space, point[1] + space)
         y1 = evaluate_equation(formula_as_str, x1)
         plt.plot(x1, y1, "r-")

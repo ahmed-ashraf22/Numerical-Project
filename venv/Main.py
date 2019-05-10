@@ -157,8 +157,11 @@ class Main:
         elif self.current_method == "Secant":
             self.method = Secant(self.formula_as_str, x1, x2, max_iter, eps)
         else:
-            self.method = BiergeVieta(self.formula_as_str, x1, x2, max_iter, eps)
+            self.method = BirgeVieta(self.formula_as_str, x1, x2, max_iter, eps)
         print(self.formula_as_str)
+        if (self.current_method == 'Birge-Vieta'):
+            self.method.solve()
+            return
         self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
         print(self.result)
         print(number_of_iterations)
@@ -373,7 +376,7 @@ class NewtonRaphson(object):
         plt.ylabel("F(X)")
         plt.axvline(point[0])
         plt.axvline(point[1])
-        space = ((point[1]-point[0]) * 0.5)
+        space = ((point[1] - point[0]) * 0.5)
         x1 = np.linspace(point[0] - space, point[1] + space)
         y1 = evaluate_equation(formula_as_str, x1)
         plt.plot(x1, y1, "r-")
@@ -511,7 +514,6 @@ class FixedPoint(object):
         plt.show(block=False)
 
 
-
 class BirgeVieta(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
@@ -520,8 +522,61 @@ class BirgeVieta(object):
         self.max_iterations = int(max_iterations)
         self.epsilon = float(epsilon)
         self.formula_as_str = formula_as_str
+        x = Symbol('x')
+        self.coeff = Poly(formula_as_str, x).all_coeffs()
+        self.deg = degree(parse_expr(formula_as_str), gen=x)
+        self.coeff = [float(i) for i in self.coeff]
 
-    # def solve(self):
+    def solve(self):
+        sol = [self.x1]
+        iterationRows = []
+        errors = []
+        roots = []
+        time = 0
+        if self.deg <= 1:
+            return
+        for i in range(self.max_iterations):
+            b = [self.coeff[0]]
+            for j in range(len(self.coeff) - 1):
+                b.append((self.x1 * b[j]) + self.coeff[j + 1])
+            c = [self.coeff[0]]
+            for j in range(len(self.coeff) - 2):
+                c.append((self.x1 * c[j]) + self.coeff[j + 1])
+            self.x1 -= b[len(b) - 1] / c[len(c) - 1]
+            sol.append(self.x1)
+            if abs(1 - sol[len(sol) - 2] / self.x1) <= self.epsilon:
+                break
+
+        x_old = None
+        for i in range(len(sol)):
+            if x_old != None:
+                ea = abs(sol[i] - x_old)
+                ea_rel = abs(sol[i] - x_old) / max(abs(x_old), abs(sol[i]))
+            else:
+                ea = "-"
+            iterationRows.append([i + 1, sol[i], evaluate_equation(self.formula_as_str, sol[i]), ea])
+            errors.append((i + 1, ea))
+            roots.append((i + 1, sol[i]))
+            x_old = sol[i]
+
+        table = BirgeVietaTable("Birge-Vieta", ['Step', 'xi', 'f(xi)', 'Abs. Error'], iterationRows)
+
+        file = open("birge_vieta.txt", "w+")
+        file.write(table.get_as_str())
+        file.close()
+
+
+class BirgeVietaTable(object):
+    def __init__(self, title, header, data):
+        self.header = header
+        self.data = data
+        self.title = title
+
+    def get_as_str(self):
+        string = "Table Title: " + str(self.title) + "\n" + str(self.header) + "\n"
+        for row in self.data:
+            string += str(row) + "\n"
+        return string
 
 
 class Limits(object):

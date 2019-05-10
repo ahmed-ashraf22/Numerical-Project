@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from functools import partial
 import parser
+import random
+import timeit
 from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 from matplotlib.ticker import NullFormatter
@@ -84,7 +86,7 @@ class Main:
         tkvar = StringVar(master)
 
         # Dictionary with options
-        choices = {'Bisection', 'False-Position', 'Fixed Point', 'Newton-Raphson', 'Secant', 'Birge-Vieta'}
+        choices = {'Bisection', 'False-Position', 'Fixed Point', 'Newton-Raphson', 'Secant', 'Birge-Vieta', 'General'}
         tkvar.set('Bisection')  # set the default option
 
         self.popupMenu = OptionMenu(master, tkvar, *choices, command=self.method_to_use)
@@ -116,7 +118,7 @@ class Main:
         global i
         global global_limits
         global errors
-        file_mode = True
+        file_mode = (self.file_entry.get() != "")
         i = -1
         errors = []
         self.formula_as_str = ""
@@ -156,20 +158,14 @@ class Main:
             self.method = FixedPoint(self.formula_as_str, x1, max_iter, eps)
         elif self.current_method == "Secant":
             self.method = Secant(self.formula_as_str, x1, x2, max_iter, eps)
+        elif self.current_method == "General":
+            self.method = General(self.formula_as_str, max_iter, eps)
         else:
             self.method = BirgeVieta(self.formula_as_str, x1, x2, max_iter, eps)
-        print(self.formula_as_str)
         if (self.current_method == 'Birge-Vieta'):
             self.method.solve()
             return
         self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
-        print(self.result)
-        print(number_of_iterations)
-        print(errors)
-        print(time)
-        print(precision)
-        print(values)
-        print(global_limits)
 
         # TODO : use flexible plotting scales
         # Plotting
@@ -237,12 +233,11 @@ class Main:
             self.method.plot(point, mid, self.formula_as_str)
         elif self.current_method == "Newton-Raphson":
             self.method.plot(point, self.formula_as_str)
-        elif self.current_method == "Fixed Point":
-            self.method.plot(point, self.formula_as_str)
         elif self.current_method == "Secant":
             self.method.plot(point, mid, self.formula_as_str)
         elif self.current_method == "Fixed Point":
             self.method.plot(point[1], self.formula_as_str)
+        # TODO: plot general method using either fixed point plot or newton raphson plot (using General(self.current_method).solved_using_fixed_point))
 
     def left_arrow(self):
         global i
@@ -261,6 +256,7 @@ class Main:
             self.method.plot(point, mid, self.formula_as_str)
         elif self.current_method == "Fixed Point":
             self.method.plot(point[1], self.formula_as_str)
+        # TODO: plot general method using either fixed point plot or newton raphson plot (using General(self.current_method).solved_using_fixed_point))
 
 
 class Secant(object):
@@ -577,6 +573,49 @@ class BirgeVietaTable(object):
         for row in self.data:
             string += str(row) + "\n"
         return string
+
+
+class General(object):
+    # Default Max Iterations = 50, Default Epsilon = 0.00001
+    def __init__(self, formula_as_str, max_iterations=50, epsilon=0.00001):
+        self.max_iterations = int(max_iterations)
+        self.epsilon = float(epsilon)
+        self.formula_as_str = formula_as_str
+        x = Symbol('x')
+        self.coeff = Poly(formula_as_str, x).all_coeffs()
+        self.deg = degree(parse_expr(formula_as_str), gen=x)
+        self.coeff = [float(i) for i in self.coeff]
+
+    def solve(self):
+        x = Symbol('x')
+        coeff = Poly(self.formula_as_str, x).all_coeffs()
+        coeff = coeff[-2]
+        fixed_formula = self.formula_as_str + "-" + str(coeff) + "*x"
+        div = -float(1 / coeff)
+        fixed_formula = "(" + fixed_formula + ") * " + str(div)
+        startTime = timeit.default_timer()
+        while True:
+            x0 = random.randrange(-5000, 5000) / 100.0
+            try:
+                result = NewtonRaphson(self.formula_as_str, x0, self.max_iterations, self.epsilon)
+                result = result.solve()
+                if abs(evaluate_equation(self.formula_as_str, result[0])) < self.epsilon:
+                    self.solved_using_fixed_point = False;
+                    return result
+            except:
+                pass
+            try:
+                if self.formula_as_str != None and abs(evaluate_equation(f_prime, x0)) < 1.0:
+                    result = FixedPoint(fixed_formula, x0, self.max_iterations, self.epsilon)
+                    result = result.solve()
+                    if abs(evaluate_equation(self.formula_as_str, result[0])) < self.epsilon:
+                        self.solved_using_fixed_point = True;
+                        return result
+            except:
+                pass
+
+            if (timeit.default_timer() - startTime) > 60:
+                return "failed", 0, None, 60, 0, None, None
 
 
 class Limits(object):

@@ -28,6 +28,9 @@ def evaluate_equation(formula, x):
 global_limits = []
 errors = []
 i = -1
+list_of_x1 = []
+list_of_x2 = []
+list_of_values = []
 
 
 class Main:
@@ -82,16 +85,22 @@ class Main:
         b = Button(master, text="Solve", command=self.solve, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
         b.place(x=380, y=320)
 
+
+
         # Create a Tkinter variable
         tkvar = StringVar(master)
 
         # Dictionary with options
-        choices = {'Bisection', 'False-Position', 'Fixed Point', 'Newton-Raphson', 'Secant', 'Birge-Vieta', 'General'}
+        choices = {'Bisection', 'False-Position', 'Fixed Point', 'Newton-Raphson', 'Secant',
+                   'Birge-Vieta', 'All Methods', 'General'}
         tkvar.set('Bisection')  # set the default option
 
         self.popupMenu = OptionMenu(master, tkvar, *choices, command=self.method_to_use)
         self.popupMenu.place(x=150, y=165)
         self.popupMenu["bg"] = "#16A085"
+
+        b2 = Button(master, text="Add", command=self.add, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
+        b2.place(x=350, y=165)
 
         label = Label(master, text="#.# Numerical Methods #.#", font="verdana 20 bold", bg="#212F3C", pady=20,
                       fg="#16A085")
@@ -111,17 +120,96 @@ class Main:
         self.method = BisectionAndFalsePosition(True, "", 0, 0, 0, 0)
         self.result = 0
 
+        self.formula_as_str = ""
+
     def method_to_use(self, value):
         self.current_method = value
+
+    def add(self):
+        global i, global_limits, errors, list_of_x1, list_of_x2, list_of_values
+        plt.close('all')
+        file_mode = (self.file_entry.get() != "")
+        max_iter = 50
+        x1 = ""
+        x2 = ""
+        eps = 0.00001
+        if not file_mode:
+            self.formula_as_str = self.function_entry.get()
+            max_iter = self.max_entry.get()
+            x1 = self.x0_entry.get()
+            x2 = self.x1_entry.get()
+            eps = self.epsilon_entry.get()
+        # Reading from file
+        if file_mode:
+            file_name = self.file_entry.get()
+            file = open(file_name, "r+")
+            formula_as_str_list = file.readline().splitlines()
+            self.formula_as_str = formula_as_str_list[0]
+            current_method_list = file.readline().splitlines()
+            self.current_method = current_method_list[0]
+            x = file.readline()
+            x = x.split()
+            float_numbers = []
+            for item in x:
+                float_numbers.append(float(item))
+            x1 = float_numbers[0]
+            x2 = float_numbers[1]
+        plt.figure(1)
+        plt.title("All Methods")
+        plt.xlabel("NO. Iterations")
+        plt.ylabel("Obtained Root")
+        for j in range(len(list_of_values)):
+            values = list_of_values[j]
+            temp_x = [i for i in range(len(values))]
+            temp_y = values
+            plt.plot(temp_x, temp_y, "b-*")
+
+        if self.current_method == "Bisection":
+            self.method = BisectionAndFalsePosition(True, self.formula_as_str, x1, x2, max_iter, eps)
+            self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
+            x = [i for i in range(len(values))]
+            y = values
+            plt.plot(x, y, "g-*")
+            list_of_values.append(values)
+
+        elif self.current_method == "Newton-Raphson":
+            self.method = NewtonRaphson(self.formula_as_str, x1, max_iter, eps)
+            self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
+            x = [i for i in range(len(values))]
+            y = values
+            plt.plot(x, y, "g-*")
+            list_of_values.append(values)
+        elif self.current_method == "False-Position":
+            self.method = BisectionAndFalsePosition(False, self.formula_as_str, x1, x2, max_iter, eps)
+            self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
+            x = [i for i in range(len(values))]
+            y = values
+            plt.plot(x, y, "g-*")
+            list_of_values.append(values)
+
+        elif self.current_method == "Fixed Point":
+            self.method = FixedPoint(self.formula_as_str, x1, max_iter, eps)
+            self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
+            x = [i for i in range(len(values))]
+            y = values
+            plt.plot(x, y, "g-*")
+            list_of_values.append(values)
+
+        elif self.current_method == "Secant":
+            self.method = Secant(self.formula_as_str, x1, x2, max_iter, eps)
+            self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
+            x = [i for i in range(len(values))]
+            y = values
+            plt.plot(x, y, "g-*")
+            list_of_values.append(values)
+
+        plt.show(block=False)
 
     def solve(self):
         global i
         global global_limits
         global errors
         file_mode = (self.file_entry.get() != "")
-        i = -1
-        errors = []
-        self.formula_as_str = ""
         max_iter = 50
         x1 = ""
         x2 = ""
@@ -158,6 +246,21 @@ class Main:
             self.method = FixedPoint(self.formula_as_str, x1, max_iter, eps)
         elif self.current_method == "Secant":
             self.method = Secant(self.formula_as_str, x1, x2, max_iter, eps)
+        elif self.current_method == "All Methods":
+            plt.figure(1)
+            plt.title("All Methods")
+            plt.xlabel("NO. Iterations")
+            plt.ylabel("Obtained Root")
+            self.method = BisectionAndFalsePosition(True, self.formula_as_str, x1, x2, max_iter, eps)
+            self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
+            x1 = [i for i in range(len(values))]
+            y1 = values
+            plt.plot(x1, y1, "b-*")
+            self.method = Secant(self.formula_as_str, x1, x2, max_iter, eps)
+            self.result, number_of_iterations, errors, time, precision, values, global_limits = self.method.solve()
+
+            plt.show(block=False)
+
         elif self.current_method == "General":
             self.method = General(self.formula_as_str, max_iter, eps)
         else:
@@ -169,15 +272,15 @@ class Main:
 
         # TODO : use flexible plotting scales
         # Plotting
-        plt.figure(1)
-        plt.title(self.current_method)
-        plt.xlabel("X")
-        plt.ylabel("F(X)")
-        x1 = np.linspace(0, 0.12)
-        y1 = evaluate_equation(self.formula_as_str, x1)
-        plt.ylim(-0.0003, 0.0003)
-        plt.plot(x1, y1, "b-*")
-        plt.show(block=False)
+        # plt.figure(1)
+        # plt.title(self.current_method)
+        # plt.xlabel("X")
+        # plt.ylabel("F(X)")
+        # x1 = np.linspace(0, 0.12)
+        # y1 = evaluate_equation(self.formula_as_str, x1)
+        # plt.ylim(-0.0003, 0.0003)
+        # plt.plot(x1, y1, "b-*")
+        # plt.show(block=False)
 
         iteration_label = Label(text="Iterations: ", font="verdana 10 bold", bg="#212F3C", pady=20,
                                 fg="#16A085")
@@ -256,12 +359,17 @@ class Main:
             self.method.plot(point, mid, self.formula_as_str)
         elif self.current_method == "Fixed Point":
             self.method.plot(point[1], self.formula_as_str)
-        # TODO: plot general method using either fixed point plot or newton raphson plot (using General(self.current_method).solved_using_fixed_point))
+        # TODO: plot general method using either fixed point plot or newton raphson plot
+        #  (using General(self.current_method).solved_using_fixed_point))
 
 
 class Secant(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        global errors, i, global_limits
+        i = -1
+        errors = []
+        global_limits = []
         self.x1 = float(x1)
         self.x2 = float(x2)
         self.max_iterations = int(max_iterations)
@@ -323,6 +431,10 @@ class Secant(object):
 class NewtonRaphson(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, formula_as_str, x1, max_iterations=50, epsilon=0.00001):
+        global errors, i, global_limits
+        i = -1
+        errors = []
+        global_limits = []
         self.x1 = float(x1)
         self.max_iterations = int(max_iterations)
         self.epsilon = float(epsilon)
@@ -383,6 +495,10 @@ class NewtonRaphson(object):
 class BisectionAndFalsePosition(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, bisection, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        global errors, i, global_limits
+        i = -1
+        errors = []
+        global_limits = []
         self.x1 = float(x1)
         self.x2 = float(x2)
         self.max_iterations = int(max_iterations)
@@ -458,6 +574,10 @@ class BisectionAndFalsePosition(object):
 class FixedPoint(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, formula_as_str, x1, max_iterations=50, epsilon=0.00001):
+        global errors, i, global_limits
+        i = -1
+        errors = []
+        global_limits = []
         self.x1 = float(x1)
         self.max_iterations = int(max_iterations)
         self.epsilon = float(epsilon)
@@ -513,6 +633,10 @@ class FixedPoint(object):
 class BirgeVieta(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, formula_as_str, x1, x2, max_iterations=50, epsilon=0.00001):
+        global errors, i, global_limits
+        i = -1
+        errors = []
+        global_limits = []
         self.x1 = float(x1)
         self.x2 = float(x2)
         self.max_iterations = int(max_iterations)
@@ -578,6 +702,10 @@ class BirgeVietaTable(object):
 class General(object):
     # Default Max Iterations = 50, Default Epsilon = 0.00001
     def __init__(self, formula_as_str, max_iterations=50, epsilon=0.00001):
+        global errors, i, global_limits
+        i = -1
+        errors = []
+        global_limits = []
         self.max_iterations = int(max_iterations)
         self.epsilon = float(epsilon)
         self.formula_as_str = formula_as_str

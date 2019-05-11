@@ -5,7 +5,6 @@ Created on Mon Mar 25 00:53:21 2019
 @author: dell
 """
 
-import _ssl
 from tkinter import *
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,6 +15,7 @@ import timeit
 from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 from matplotlib.ticker import NullFormatter
+import re
 
 
 # TODO : adding trigonometry parsing
@@ -72,13 +72,52 @@ class Main:
         self.file_entry = Entry(master)
         self.file_entry.place(x=320, y=120, width=100)
 
-        b = Button(master, text="Get Roots", bg="#16A085", font="verdana 10 bold", fg="#212F3C")
+        b = Button(master, text="Get Roots", command=self.solve, bg="#16A085", font="verdana 10 bold", fg="#212F3C")
         b.place(x=380, y=370)
 
         self.formula_as_str = ""
 
     def method_to_use(self, value):
         self.current_method = value
+
+    def solve(self):
+        s = self.function_entry.get('1.0', END)
+        list = s.split("\n")
+        print(list)
+        m, b1 = self.parse_equations(list)
+        print(m)
+        print(b1)
+
+    def parse_equations(self, list_of_strings):
+        list_of_variables = []
+        matrix = []
+        b = []
+        for j in range(len(list_of_strings)-1):
+            list_of_coefficients = []
+            result = 0
+            txt = list_of_strings[j]
+            x = re.findall("(([+-])?([\d]*)?([\w])+)|((=)(-)?([\d]+))", txt)
+            for i in range(len(list_of_strings)+1):
+                if x[i][5] == "=":
+                    if x[i][6] == "-":
+                        t = float(x[i][7]) * -1
+                    else:
+                        t = float(x[i][7])
+                    result = t
+                else:
+                    if x[i][2] == '':
+                        t = 1.0
+                    else:
+                        t = float(x[i][2])
+                    if x[i][1] == "-":
+                        list_of_coefficients.append(t * -1)
+                    else:
+                        list_of_coefficients.append(t)
+                    list_of_variables.append(x[i][3])
+                    print(list_of_coefficients)
+            matrix.append(list_of_coefficients)
+            b.append(result)
+        return matrix, b
 
 
 # tkinter main GUI window

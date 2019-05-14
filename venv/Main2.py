@@ -87,6 +87,8 @@ class Main:
         m, b1 = self.parse_equations(list)
         print(m)
         print(b1)
+        gauss = GaussianElimination(m, b1)
+        gauss.solve()
 
     def parse_equations(self, list_of_strings):
         list_of_variables = []
@@ -96,8 +98,8 @@ class Main:
             list_of_coefficients = []
             result = 0
             txt = list_of_strings[j]
-            x = re.findall("(([+-])?([\d]*)?([\w])+)|((=)(-)?([\d]+))", txt)
-            for i in range(len(list_of_strings)+1):
+            x = re.findall("(([+-])?([\d]*|[\d]*\.[\d]*)?([\w])+)|((=)(-)?([\d]*\.[\d]*))", txt)
+            for i in range(len(list_of_strings)):
                 if x[i][5] == "=":
                     if x[i][6] == "-":
                         t = float(x[i][7]) * -1
@@ -118,6 +120,38 @@ class Main:
             matrix.append(list_of_coefficients)
             b.append(result)
         return matrix, b
+
+
+class GaussianElimination(object):
+    def __init__(self, matrix, results):
+        self.__matrix = matrix
+        self.__b = results
+
+    def solve(self):
+        self.forward()
+        x = self.back()
+        print(x)
+
+    def forward(self):
+        for k in range(len(self.__matrix)-1):
+            for i in range(k + 1, len(self.__matrix)):
+                factor = self.__matrix[i][k] / self.__matrix[k][k]
+                for j in range(k, len(self.__matrix)):
+                    self.__matrix[i][j] = self.__matrix[i][j] - factor * self.__matrix[k][j]
+                self.__b[i] = self.__b[i] - factor * self.__b[k]
+        return self.__matrix, self.__b
+
+    def back(self):
+        x = []
+        for k in range(len(self.__matrix)):
+            x.append(0)
+        x[len(self.__matrix)-1] = self.__b[len(self.__b)-1] / self.__matrix[len(self.__matrix)-1][len(self.__matrix)-1]
+        for i in range(len(self.__matrix)-1, -1, -1):
+            sum = 0
+            for j in range(i+1, len(self.__matrix)):
+                sum = sum + self.__matrix[i][j] * x[j]
+            x[i] = (self.__b[i] - sum) / self.__matrix[i][i]
+        return x
 
 
 # tkinter main GUI window

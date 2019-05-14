@@ -3,7 +3,7 @@ import re
 
 n = 4
 txt = "x-4r+x-4r=-5"
-x = re.findall("(([+-])?([\d]*)?([\w])+)|((=)(-)?([\d]))", txt)
+x = re.findall("(([+-])?([\d]*|[\d]*\.[\d]*)?([\w])+)|((=)(-)?([\d]*\.[\d]*))", txt)
 print(x)
 
 list_of_coefficients = []
